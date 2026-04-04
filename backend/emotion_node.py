@@ -1,5 +1,5 @@
 from typing import Dict
-from models.emotion_classifier import EmotionClassifier
+from emotion_classifier import EmotionClassifier
 
 classifier=EmotionClassifier()
 

@@ -1,4 +1,4 @@
-from models.emotion_classifier import EmotionClassifier
+from emotion_classifier import EmotionClassifier
 from rag import retrieve_context
 
 text = "I dont know whts wrong with me"
