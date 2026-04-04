@@ -2,3 +2,15 @@ torch
 transformers
 numpy
 safetensors
+
+langchain
+langchain-community
+langchain-chroma
+chromadb
+
+sentence-transformers
+huggingface-hub
+tqdm
+
+openai
+tiktoken
