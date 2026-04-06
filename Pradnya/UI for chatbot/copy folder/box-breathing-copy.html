@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Breathing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E0F2F1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            background: #E0F2F1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 32px;
+            right: 32px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            color: #26A69A;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .close-button:hover {
+            background: #26A69A;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .title {
+            position: absolute;
+            top: 12%;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #26A69A;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+
+        .breathing-box-container {
+            position: relative;
+            width: 60vh;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .box-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #FFFEF7;
+            box-shadow: 0 10px 40px rgba(38, 166, 154, 0.1);
+        }
+
+        .animated-border {
+            position: absolute;
+            background: #26A69A;
+        }
+
+        .border-top {
+            top: 0;
+            left: 0;
+            height: 8px;
+            width: 0;
+        }
+
+        .border-right {
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 0;
+        }
+
+        .border-bottom {
+            bottom: 0;
+            right: 0;
+            height: 8px;
+            width: 0;
+        }
+
+        .border-left {
+            bottom: 0;
+            left: 0;
+            width: 8px;
+            height: 0;
+        }
+
+        .phase-text {
+            position: relative;
+            z-index: 10;
+            font-size: 4rem;
+            font-weight: 300;
+            color: rgba(38, 166, 154, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 8px;
+        }
+
+        .timeline {
+            position: absolute;
+            bottom: 12%;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #26A69A;
+            letter-spacing: 2px;
+        }
+
+        .timeline span {
+            margin: 0 8px;
+        }
+
+        .timeline .active {
+            font-weight: 700;
+        }
+
+        @keyframes fillTop {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes fillRight {
+            from { height: 0; }
+            to { height: 100%; }
+        }
+
+        @keyframes fillBottom {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes fillLeft {
+            from { height: 0; }
+            to { height: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="close-button" id="closeBtn" title="Return to Home">✕</button>
+        
+        <div class="title">BOX BREATHING</div>
+        
+        <div class="breathing-box-container">
+            <div class="box-background"></div>
+            <div class="animated-border border-top"></div>
+            <div class="animated-border border-right"></div>
+            <div class="animated-border border-bottom"></div>
+            <div class="animated-border border-left"></div>
+            <div class="phase-text" id="phaseText">IN</div>
+        </div>
+        
+        <div class="timeline">
+            <span id="phase1" class="active">4s INHALE</span> |
+            <span id="phase2">4s HOLD</span> |
+            <span id="phase3">4s EXHALE</span> |
+            <span id="phase4">4s HOLD</span>
+        </div>
+    </div>
+
+    <script>
+        const phaseText = document.getElementById('phaseText');
+        const borderTop = document.querySelector('.border-top');
+        const borderRight = document.querySelector('.border-right');
+        const borderBottom = document.querySelector('.border-bottom');
+        const borderLeft = document.querySelector('.border-left');
+        const closeBtn = document.getElementById('closeBtn');
+        
+        const phases = [
+            { text: 'IN', border: borderTop, animation: 'fillTop', timeline: 'phase1' },
+            { text: 'HOLD', border: borderRight, animation: 'fillRight', timeline: 'phase2' },
+            { text: 'OUT', border: borderBottom, animation: 'fillBottom', timeline: 'phase3' },
+            { text: 'HOLD', border: borderLeft, animation: 'fillLeft', timeline: 'phase4' }
+        ];
+        
+        let currentPhase = 0;
+        
+        function resetBorders() {
+            borderTop.style.width = '0';
+            borderRight.style.height = '0';
+            borderBottom.style.width = '0';
+            borderLeft.style.height = '0';
+            borderTop.style.animation = 'none';
+            borderRight.style.animation = 'none';
+            borderBottom.style.animation = 'none';
+            borderLeft.style.animation = 'none';
+        }
+        
+        function updateTimeline(activeIndex) {
+            for (let i = 1; i <= 4; i++) {
+                const element = document.getElementById('phase' + i);
+                element.classList.remove('active');
+            }
+            document.getElementById(phases[activeIndex].timeline).classList.add('active');
+        }
+        
+        function startPhase() {
+            const phase = phases[currentPhase];
+            phaseText.textContent = phase.text;
+            
+            updateTimeline(currentPhase);
+            
+            setTimeout(() => {
+                phase.border.style.animation = `${phase.animation} 4s linear forwards`;
+            }, 50);
+            
+            setTimeout(() => {
+                resetBorders();
+                currentPhase = (currentPhase + 1) % phases.length;
+                startPhase();
+            }, 4000);
+        }
+        
+        // Close button functionality - redirect to main page
+        closeBtn.addEventListener('click', () => {
+            // If opened in new tab, close it
+            if (window.opener) {
+                window.close();
+            } else {
+                // If opened directly, redirect to main page
+                // You can change this URL to your actual main page URL
+                window.location.href = 'index copy.html';
+            }
+        });
+        
+        resetBorders();
+        startPhase();
+    </script>
+</body>
+</html>

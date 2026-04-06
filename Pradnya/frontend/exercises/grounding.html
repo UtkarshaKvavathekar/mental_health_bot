@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5-4-3-2-1 Grounding Technique</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons for visual elements -->
+    <script type="module">
+        import { createIcons, Eye, Hand, Ear, Heart, Coffee } from 'https://unpkg.com/lucide@latest';
+        window.lucideIcons = { Eye, Hand, Ear, Heart, Coffee }; 
+        createIcons({ icons: window.lucideIcons });
+    </script>
+    <style>
+        /* Custom gradient background using the specified colors */
+        body {
+            background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom glow effect for the active card */
+        .glow-active {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(38, 166, 154, 0.8), 0 0 10px rgba(38, 166, 154, 0.5);
+            border-color: #26A69A;
+        }
+        /* Transition for smooth animation */
+        .step-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
+        }
+        /* Style for the current speaking text */
+        .speaking-text {
+            color: #00796B;
+            font-style: italic;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 32px;
+            right: 32px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            color: #26A69A;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .close-button:hover {
+            background: #26A69A;
+            color: white;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+      <button class="close-button" id="closeBtn" title="Return to Home">✕</button>
+
+    <div id="app" class="w-full max-w-4xl bg-white/90 p-6 sm:p-10 rounded-xl shadow-2xl backdrop-blur-sm">
+        
+        <!-- Header -->
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[#26A69A] mb-2 text-center">
+            5-4-3-2-1 Guided Grounding
+        </h1>
+        <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+            Click 'Start' to begin the visual and spoken exercise.
+        </p>
+
+        <!-- Main Status Area -->
+        <div id="status-box" class="text-center p-4 rounded-lg bg-[#E3F2FD] mb-8 shadow-inner border border-[#B2DFDB]">
+            <p id="current-instruction" class="text-xl font-semibold text-gray-800">
+                Ready to begin?
+            </p>
+            <p id="current-speech" class="mt-2 text-sm text-gray-500 min-h-[1.5em]"></p>
+        </div>
+
+        <!-- Start/Stop Button -->
+        <!-- NOTE: Stop button is disabled by default in HTML, managed in JS -->
+        <div class="flex justify-center mb-10 space-x-4">
+            <button id="start-button" class="bg-[#26A69A] hover:bg-[#009688] text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 active:scale-95 text-lg">
+                Start Guided Session
+            </button>
+            <button id="stop-button" disabled class="bg-red-500/70 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 active:scale-95 text-lg hidden">
+                Stop Session
+            </button>
+        </div>
+        
+        <!-- Steps Container -->
+        <div id="steps-container" class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            
+            <!-- Step 5: Sight -->
+            <div id="step-5" class="step-card bg-[#E8F5E9] p-4 rounded-xl border-4 border-transparent text-center flex flex-col items-center justify-center h-40">
+                <i data-lucide="eye" class="w-10 h-10 text-[#26A69A] mb-2"></i>
+                <span class="text-4xl font-extrabold text-gray-800">5</span>
+                <p class="text-sm font-semibold text-gray-700 mt-1">things you can <span class="text-[#26A69A]">SEE</span></p>
+            </div>
+
+            <!-- Step 4: Touch -->
+            <div id="step-4" class="step-card bg-[#F3E5F5] p-4 rounded-xl border-4 border-transparent text-center flex flex-col items-center justify-center h-40">
+                <i data-lucide="hand" class="w-10 h-10 text-[#26A69A] mb-2"></i>
+                <span class="text-4xl font-extrabold text-gray-800">4</span>
+                <p class="text-sm font-semibold text-gray-700 mt-1">things you can <span class="text-[#26A69A]">TOUCH</span></p>
+            </div>
+
+            <!-- Step 3: Hearing -->
+            <div id="step-3" class="step-card bg-[#FFF9C4] p-4 rounded-xl border-4 border-transparent text-center flex flex-col items-center justify-center h-40">
+                <i data-lucide="ear" class="w-10 h-10 text-[#26A69A] mb-2"></i>
+                <span class="text-4xl font-extrabold text-gray-800">3</span>
+                <p class="text-sm font-semibold text-gray-700 mt-1">things you can <span class="text-[#26A69A]">HEAR</span></p>
+            </div>
+
+            <!-- Step 2: Smell -->
+            <div id="step-2" class="step-card bg-[#E3F2FD] p-4 rounded-xl border-4 border-transparent text-center flex flex-col items-center justify-center h-40">
+                <i data-lucide="coffee" class="w-10 h-10 text-[#26A69A] mb-2"></i>
+                <span class="text-4xl font-extrabold text-gray-800">2</span>
+                <p class="text-sm font-semibold text-gray-700 mt-1">things you can <span class="text-[#26A69A]">SMELL</span></p>
+            </div>
+
+            <!-- Step 1: Taste/Gratitude -->
+            <div id="step-1" class="step-card bg-[#E0E0E0] p-4 rounded-xl border-4 border-transparent text-center flex flex-col items-center justify-center h-40">
+                <i data-lucide="heart" class="w-10 h-10 text-red-500 mb-2"></i>
+                <span class="text-4xl font-extrabold text-gray-800">1</span>
+                <p class="text-sm font-semibold text-gray-700 mt-1">thing you can <span class="text-red-500">TASTE</span> or feel <span class="text-red-500">GRATEFUL</span> for</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const stepsData = [
+            { id: 'step-5', instruction: "5 things you can **SEE**", text: "Now, look around the room or wherever you are. Identify five things that you can see. Take your time. Don't judge them, just notice them. Perhaps the color of a wall, the texture of a surface, or the way the light falls on an object.", pause: 20000 },
+            { id: 'step-4', instruction: "4 things you can **TOUCH**", text: "Next, focus on your sense of touch. Notice four things that you can feel right now. This could be the weight of your body in your chair, the fabric of your clothes against your skin, the cool air on your face, or the texture of the floor beneath your feet.", pause: 20000 },
+            { id: 'step-3', instruction: "3 things you can **HEAR**", text: "Shift your attention to your hearing. Name three things you can currently hear. Listen beyond the immediate sounds. Maybe it’s a distant car, the hum of electronics, or even the sound of your own breathing.", pause: 20000 },
+            { id: 'step-2', instruction: "2 things you can **SMELL**", text: "Now, focus inward on your sense of smell. Identify two things you can smell. It might be subtle—the faint scent of coffee, detergent on your shirt, or just the clean air around you.", pause: 15000 },
+            { id: 'step-1', instruction: "1 thing you can **TASTE** or be **GRATEFUL** for", text: "Finally, notice one thing you can taste—maybe the lingering flavor of a recent meal, or the simple taste in your mouth. If you can’t taste anything, focus instead on one thing you are genuinely grateful for in this very moment.", pause: 15000 }
+        ];
+
+        const startButton = document.getElementById('start-button');
+        const stopButton = document.getElementById('stop-button');
+        const instructionBox = document.getElementById('current-instruction');
+        const speechBox = document.getElementById('current-speech');
+        
+        const synth = window.speechSynthesis;
+        let isSpeaking = false;
+        let currentStepIndex = 0;
+        let timer = null;
+
+        /**
+         * Converts text to speech. Returns a Promise that resolves when the speech ends.
+         * @param {string} text - The text to speak.
+         * @returns {Promise<void>}
+         */
+        function speak(text) {
+            return new Promise((resolve) => {
+                if (!synth || !text) {
+                    console.error("Speech synthesis not available or text empty.");
+                    resolve(); 
+                    return;
+                }
+                
+                // Cancel any pending speech
+                synth.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // Optional: set a friendly voice and rate
+                utterance.rate = 0.9; 
+                utterance.pitch = 1;
+
+                utterance.onend = () => {
+                    resolve();
+                };
+
+                utterance.onerror = (event) => {
+                    console.error('SpeechSynthesisUtterance.onerror', event);
+                    resolve(); 
+                };
+                
+                synth.speak(utterance);
+                speechBox.innerHTML = `<span class="speaking-text">"${text}"</span>`;
+            });
+        }
+
+        /**
+         * Clears all active styles from the step cards and cancels speech.
+         */
+        function clearActiveStyles() {
+            stepsData.forEach(step => {
+                document.getElementById(step.id).classList.remove('glow-active');
+            });
+            if (synth.speaking) {
+                synth.cancel();
+            }
+        }
+        
+        /**
+         * Stops the current session (speaking and timers).
+         */
+        function stopSession() {
+            if (timer) clearTimeout(timer);
+            clearActiveStyles();
+            synth.cancel();
+            isSpeaking = false;
+            currentStepIndex = 0;
+
+            instructionBox.textContent = "Session Stopped.";
+            speechBox.textContent = "Click Start to begin again.";
+            
+            startButton.disabled = false;
+            startButton.textContent = "Restart Guided Session";
+            
+            // FIX: Disable the stop button and hide it
+            stopButton.disabled = true; 
+            stopButton.classList.add('hidden');
+        }
+
+        /**
+         * Starts the next step of the grounding sequence, including speech and pause.
+         */
+        async function nextStep() {
+            if (!isSpeaking) return; // Check if session was stopped
+
+            // 1. Check if the exercise is complete
+            if (currentStepIndex >= stepsData.length) {
+                clearActiveStyles();
+                await speak("Take a final deep breath in, filling your lungs completely... and exhale, releasing any remaining tension. You have successfully used your senses to ground yourself. Notice how you feel now, compared to when we started.");
+                instructionBox.innerHTML = "🧘 **Exercise Complete!**";
+                speechBox.textContent = "Click Restart to repeat.";
+                stopSession();
+                return;
+            }
+
+            const currentStep = stepsData[currentStepIndex];
+            const element = document.getElementById(currentStep.id);
+
+            // 2. Highlight the current step visually
+            clearActiveStyles(); 
+            element.classList.add('glow-active');
+            instructionBox.innerHTML = currentStep.instruction;
+
+            // 3. Speak the instruction text
+            await speak(currentStep.text);
+
+            // 4. Implement the timed PAUSE (20s, 15s, etc.)
+            instructionBox.innerHTML = `PAUSE - Observe your surroundings (Next step in ${currentStep.pause / 1000}s)`;
+            speechBox.textContent = "(Silence for observation)";
+            
+            timer = setTimeout(() => {
+                currentStepIndex++; // Move to the next step
+                nextStep(); // Recurse
+            }, currentStep.pause);
+        }
+        
+        /**
+         * Initializes and starts the grounding exercise.
+         */
+        async function startExercise() {
+            if (isSpeaking) return;
+
+            // Setup state
+            isSpeaking = true;
+            currentStepIndex = 0;
+            startButton.disabled = true;
+
+            // FIX: Enable the stop button and show it
+            stopButton.disabled = false; 
+            stopButton.classList.remove('hidden');
+            
+            startButton.textContent = "Session in Progress...";
+            instructionBox.textContent = "Initializing Audio...";
+            speechBox.textContent = "";
+            
+            // Introduction Speech
+            await speak("Welcome. This is a powerful technique to help us anchor ourselves in the present moment, especially when feeling overwhelmed or stressed. It’s called the 5-4-3-2-1 method, and it uses our five senses to bring us back to the 'here and now'. Take a deep, slow breath in... and a long, slow breath out.");
+            
+            await speak("When you’re ready, let’s begin.");
+            
+            // Start the sequence after the intro
+            nextStep();
+        }
+
+        // Attach event listeners
+        startButton.addEventListener('click', startExercise);
+        stopButton.addEventListener('click', stopSession);
+
+        // Initial setup for cleanup
+        window.addEventListener('beforeunload', () => {
+            if (synth.speaking) synth.cancel();
+        });
+
+          // Close button functionality - redirect to main page
+        closeBtn.addEventListener('click', () => {
+            // If opened in new tab, close it
+            if (window.opener) {
+                window.close();
+            } else {
+                // If opened directly, redirect to main page
+                // You can change this URL to your actual main page URL
+                window.location.href = 'O_index copy.html';
+            }
+        });
+
+    </script>
+</body>
+</html>
