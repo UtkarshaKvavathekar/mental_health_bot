@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Mental Health Chatbot</title>
+  <style>
+    /* --- CSS --- */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #F8FAFC;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1F2937;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .card h2 {
+      color: #1F2937;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      color: #6B7280;
+      margin: 4px 0;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background-color: #6366F1;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      min-width: 180px;
+    }
+
+    button:hover {
+      background-color: #4F46E5;
+    }
+
+    /* Emotion trend bars */
+    .trend-bar {
+      height: 24px;
+      color: white;
+      padding-left: 8px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px 16px;
+      color: #6B7280;
+    }
+
+    .empty-state h2 {
+      color: #1F2937;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mental Health Dashboard</h1>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="empty-state" style="display:none;">
+      <h2>No data yet</h2>
+      <p>Start a chat to see your insights!</p>
+      <button onclick="startNewChat()">Start Chat</button>
+    </div>
+
+    <!-- Current Session Card -->
+    <div class="card" id="current-session-card">
+      <h2>Current Session</h2>
+      <p id="current-emotion">Current Emotion: -</p>
+      <p id="safety-status">Safety Status: -</p>
+      <p id="message-count">Messages: 0</p>
+    </div>
+
+    <!-- Emotion Trends Card -->
+    <div class="card" id="emotion-trends-card">
+      <h2>Emotion Trends</h2>
+      <div id="emotion-trends"></div>
+      <p id="top-emotions"></p>
+    </div>
+
+    <!-- Conversation Statistics Card -->
+    <div class="card" id="conversation-stats-card">
+      <h2>Conversation Statistics</h2>
+      <p id="total-sessions">Total Sessions: 0</p>
+      <p id="average-sentiment">Average Sentiment: 0%</p>
+      <p id="total-messages">Total Messages: 0</p>
+    </div>
+
+    <!-- Mental Health Insights Card -->
+    <div class="card" id="insights-card">
+      <h2>Mental Health Insights</h2>
+      <p id="insights-text">Start chatting to see insights!</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="buttons">
+      <button onclick="goToChatHistory()">View Detailed History</button>
+      <button onclick="startNewChat()">Start New Chat</button>
+    </div>
+  </div>
+
+  <script>
+    /* --- JavaScript --- */
+    // Mock global plugin data (replace with actual plugin data)
+    const chatState = {
+      messages: [{ text: "Hello" }, { text: "Feeling anxious" }],
+      currentEmotion: "Happy",
+      safetyStatus: "safe",
+    };
+
+    const analyticsData = {
+      conversations: [
+        { messages: [{}, {}] },
+        { messages: [{}] }
+      ],
+      emotionTrends: [
+        { emotion: "Happy", count: 45 },
+        { emotion: "Calm", count: 30 },
+        { emotion: "Anxious", count: 15 },
+        { emotion: "Sad", count: 10 }
+      ],
+      totalSessions: 2,
+      averageSentiment: 80
+    };
+
+    function renderDashboard() {
+      const emptyStateDiv = document.getElementById('empty-state');
+      const hasData = chatState.messages.length > 0 || analyticsData.conversations.length > 0;
+
+      if (!hasData) {
+        emptyStateDiv.style.display = 'block';
+        document.getElementById('current-session-card').style.display = 'none';
+        document.getElementById('emotion-trends-card').style.display = 'none';
+        document.getElementById('conversation-stats-card').style.display = 'none';
+        document.getElementById('insights-card').style.display = 'none';
+        return;
+      } else {
+        emptyStateDiv.style.display = 'none';
+      }
+
+      // Current Session Card
+      document.getElementById('current-emotion').innerText =
+        `Current Emotion: ${chatState.currentEmotion || 'Neutral'}`;
+      document.getElementById('safety-status').innerText =
+        `Safety Status: ${chatState.safetyStatus === 'safe' ? 'Safe ✓' : 'High Risk ⚠️'}`;
+      document.getElementById('message-count').innerText =
+        `Messages: ${chatState.messages?.length || 0}`;
+
+      // Emotion Trends
+      const trendsContainer = document.getElementById('emotion-trends');
+      trendsContainer.innerHTML = '';
+      const totalEmotionCount = analyticsData.emotionTrends.reduce((a,b) => a+b.count, 0) || 1;
+
+      analyticsData.emotionTrends.forEach(trend => {
+        const bar = document.createElement('div');
+        bar.className = 'trend-bar';
+        bar.style.width = `${(trend.count / totalEmotionCount) * 100}%`;
+        bar.style.backgroundColor = '#6366F1';
+        bar.innerText = `${trend.emotion} ${trend.count}`;
+        trendsContainer.appendChild(bar);
+      });
+
+      // Top emotions
+      document.getElementById('top-emotions').innerText =
+        analyticsData.emotionTrends.map(e => 
+          `${e.emotion}: ${Math.round((e.count/totalEmotionCount)*100)}%`
+        ).join(', ');
+
+      // Conversation Stats
+      document.getElementById('total-sessions').innerText = `Total Sessions: ${analyticsData.totalSessions || 0}`;
+      document.getElementById('average-sentiment').innerText = `Average Sentiment: ${analyticsData.averageSentiment || 0}%`;
+      const totalMessages = analyticsData.conversations.reduce((acc, conv) => acc + (conv.messages?.length || 0), 0);
+      document.getElementById('total-messages').innerText = `Total Messages: ${totalMessages}`;
+
+      // Insights
+      const insightsText = document.getElementById('insights-text');
+      if (analyticsData.emotionTrends.length) {
+        const topEmotion = analyticsData.emotionTrends.reduce((prev,curr) => curr.count > prev.count ? curr : prev);
+        if (topEmotion.emotion.toLowerCase() === 'anxious') insightsText.innerText = "Your anxiety levels are decreasing 📉";
+        else if (topEmotion.emotion.toLowerCase() === 'happy') insightsText.innerText = "You're feeling more happy lately 😄";
+        else if (topEmotion.emotion.toLowerCase() === 'calm') insightsText.innerText = "You're feeling more calm 🧘";
+        else insightsText.innerText = "Keep tracking your emotions for better insights 🌱";
+      } else {
+        insightsText.innerText = "Start chatting to see your insights!";
+      }
+    }
+
+    // Button functions
+    function goToChatHistory() {
+      window.location.href = 'chat-history.html'; // Replace with actual page
+    }
+
+    function startNewChat() {
+      window.location.href = 'chat.html'; // Replace with actual page
+    }
+
+    // Render dashboard on page load
+    window.onload = renderDashboard;
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Meditation Session</title>
+
+<link rel="stylesheet" href="css/common.css" />
+<link rel="stylesheet" href="css/meditation.css" />
+</head>
+
+<body class="light-bg">
+
+<div class="meditation-container">
+
+  <!-- VOICE UI -->
+  <div id="voiceModal" class="voice-modal hidden">
+    <div class="voice-box">
+      <h2>Serene</h2>
+      <p id="voiceText">Preparing...</p>
+      <button id="closeVoice">✕</button>
+    </div>
+  </div>
+
+  <!-- ANIMATION UI -->
+  <div id="animationArea">
+    <div id="circle"></div>
+  </div>
+
+  <h1 id="title">Get Ready...</h1>
+  <p id="subtitle">Relax</p>
+
+</div>
+
+<script src="script/meditationEngine.js"></script>
+
+</body>
+</html>

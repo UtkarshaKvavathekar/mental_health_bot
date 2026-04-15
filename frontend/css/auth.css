@@ -1,0 +1,163 @@
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+/* body{
+    font-family:'Inter','Roboto',-apple-system,BlinkMacSystemFont,sans-serif;
+} */
+
+.light-bg{
+    background:linear-gradient(135deg,#E0F2F1 0%,#B2DFDB 100%);
+    min-height:100vh;
+}
+
+/* Navbar (Same as Home) */
+.header{
+    background:white;
+    padding:16px 40px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo-container{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo{
+    width:40px;
+    height:40px;
+    background:#26A69A;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-weight:bold;
+}
+
+.brand-name{
+    font-size:22px;
+    font-weight:700;
+    color:#1A202C;
+}
+
+.nav-links{
+    display:flex;
+    gap:25px;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#444;
+    font-size:14px;
+    font-weight:500;
+}
+
+.nav-links a:hover{
+    color:#26A69A;
+}
+
+/* Auth Box */
+.auth-wrapper{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:calc(100vh - 80px); /* adjust for navbar */
+}
+
+.auth-box{
+    background:white;
+    width:380px;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.auth-box h2{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.input-group{
+    margin-bottom:18px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.input-group input:focus{
+    border-color:#26A69A;
+    outline:none;
+}
+
+.input-group select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    background: white;
+    font-size: 14px;
+    color: #444;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.input-group select:focus {
+    border-color: #26A69A;
+}
+
+/* .input-group {
+    position: relative;
+}
+
+.input-group::after {
+    content: "▼";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #666;
+    pointer-events: none;
+} */
+
+.auth-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:30px;
+    background:#26A69A;
+    color:white;
+    font-size:15px;
+    cursor:pointer;
+}
+
+.auth-btn:hover{
+    background:#1F8A7E;
+}
+
+.switch{
+    text-align:center;
+    margin-top:15px;
+    font-size:13px;
+}
+
+.switch span{
+    color:#26A69A;
+    cursor:pointer;
+}

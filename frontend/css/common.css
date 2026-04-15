@@ -1,0 +1,108 @@
+.navbar{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: #fff;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container{
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* FIXED HERE */
+.logo{
+    width: 40px;
+    height: 40px;
+    background: #26A69A;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.nav-links{
+    display: flex;
+    gap: 25px;
+}
+
+.nav-links a{
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-links a:hover{
+    color: #26A69A;
+}
+
+.nav-links a.active {
+    color: #26A69A;
+    font-weight: 700;
+    border-bottom: 2px solid #26A69A;
+    padding-bottom: 3px;
+}
+
+body{
+    font-family: "Inter", sans-serif;
+    background: linear-gradient(135deg,#e0f2f1 0%,#b2dfdb 100%);
+    min-height: 100vh;
+    margin: 0;
+}
+
+button{
+    font-family: inherit;
+    transition: 0.3s ease;
+}
+
+button:hover{
+    transform: translateY(-2px);
+}
+
+.card, .auth-box, .relief-card, .feature-card{
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #26A69A;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#dashboardLoading,
+#profileLoading,
+#historyLoading {
+  text-align: center;
+  font-size: 18px;
+  padding: 20px;
+  font-weight: bold;
+}
+
+#errorMessage,
+#dashboardLoading,
+#profileLoading,
+#historyLoading {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+  padding: 15px;
+}

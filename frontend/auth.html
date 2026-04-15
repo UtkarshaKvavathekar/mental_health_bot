@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Serene | Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="css/auth.css" />
+  </head>
+
+  <body class="light-bg">
+
+    <!-- Auth Section -->
+    <div class="auth-wrapper">
+      <form id="authForm">
+        <div class="auth-box">
+
+          <h2 id="formTitle">Login</h2>
+
+          <!-- Full Name (Sign Up only) -->
+          <div class="input-group" id="nameField" style="display: none">
+            <input type="text" id="name" placeholder="Full Name" minlength="3"/>
+          </div>
+
+          <!-- Email -->
+          <div class="input-group">
+            <input type="email" id="email" placeholder="Email Address" required/>
+          </div>
+
+          <!-- Phone -->
+          <div class="input-group" id="phoneField" style="display: none">
+            <input type="text" id="phone" placeholder="Phone Number" />
+          </div>
+
+          <!-- Age -->
+          <div class="input-group" id="ageField" style="display: none">
+            <input type="number" id="age" placeholder="Age" min="10" max="100" />
+          </div>
+
+          <!-- Gender -->
+          <div class="input-group" id="genderField" style="display: none">
+            <select id="gender">
+              <option value="" disabled selected>Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- Password -->
+          <div class="input-group">
+            <input type="password" id="password" placeholder="Password" required minlength="6"/>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="input-group" id="confirmField" style="display: none">
+            <input type="password" id="confirmPassword" placeholder="Confirm Password"/>
+          </div>
+
+          <!-- FIXED BUTTON -->
+          <button class="auth-btn" id="authBtn" type="submit">
+            Login
+          </button>
+
+          <div class="switch">
+            Don’t have account? <span onclick="switchForm()">Sign Up</span>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+    <!-- SCRIPTS (IMPORTANT ORDER) -->
+    <script src="script/api.js"></script>
+    <script src="script/auth.js"></script>
+
+  </body>
+</html>

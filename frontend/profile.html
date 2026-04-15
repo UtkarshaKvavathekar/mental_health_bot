@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Serene | Profile</title>
+
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/profile.css">
+</head>
+
+<body>
+  <div id="navbar"></div>
+
+<!-- Navbar will be injected -->
+
+<div class="container">
+<div id="profileLoading">Loading profile...</div>
+<!-- PROFILE HEADER -->
+<div class="card profile-header">
+  <div class="profile-avatar" id="avatar">U</div>
+
+  <div class="profile-info">
+    <h2 id="userName">Loading...</h2>
+    <p id="userEmail">Loading...</p>
+    <p id="memberSince">Loading...</p>
+    <p id="userId">Loading...</p>
+  </div>
+
+  <button class="edit-btn">✏️ Edit Profile</button>
+</div>
+
+<!-- WELLNESS STATISTICS -->
+<div class="card">
+  <h3>📊 Your Wellness Journey</h3>
+
+  <div class="stats-grid">
+
+    <div class="stat-box" style="background:#f1f8e9;">
+      <h4>📱 Messages Sent</h4>
+      <p>-</p>
+    </div>
+
+    <div class="stat-box" style="background:#ede7f6;">
+      <h4>🧘 Meditation Sessions</h4>
+      <p>-</p>
+    </div>
+
+    <div class="stat-box" style="background:#fff3e0;">
+      <h4>⏱️ Total Meditation Time</h4>
+      <p>-</p>
+    </div>
+
+    <div class="stat-box" style="background:#fce4ec;">
+      <h4>🔥 Current Streak</h4>
+      <p>-</p>
+    </div>
+
+    <div class="stat-box" style="background:#e0f7fa;">
+      <h4>😊 Mood Entries Logged</h4>
+      <p>-</p>
+    </div>
+
+    <div class="stat-box" style="background:#f3e5f5;">
+      <h4>📅 Days Using App</h4>
+      <p>-</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- MOOD TRENDS -->
+<div class="card">
+  <h3>Mood Trends (Last 7 Days)</h3>
+
+  <div class="chart-wrapper">
+    <div class="y-axis">
+      <span>100</span>
+      <span>75</span>
+      <span>50</span>
+      <span>25</span>
+      <span>0</span>
+    </div>
+
+    <div class="chart-bars" id="moodChart"></div>
+  </div>
+</div>
+
+<!-- MEDITATION HISTORY (DYNAMIC) -->
+<div class="card">
+  <h3>Recent Meditation Sessions</h3>
+
+  <!-- 🔥 Dynamic container -->
+  <div id="meditationList">
+    <p>Loading sessions...</p>
+  </div>
+</div>
+
+<!-- SETTINGS (Keep static for now) -->
+<div class="card">
+  <h3>Settings & Preferences</h3>
+
+  <div class="settings-toggle">🌙 Dark Mode <input type="checkbox" checked></div>
+  <div class="settings-toggle">🔔 Notifications <input type="checkbox" checked></div>
+  <div class="settings-toggle">📧 Email Reminders <input type="checkbox"></div>
+  <div class="settings-toggle">🔒 Privacy Mode <input type="checkbox"></div>
+
+  <div class="settings-toggle">
+    📱 Language
+    <select>
+      <option>English</option>
+      <option>Hindi</option>
+    </select>
+  </div>
+
+  <div class="settings-toggle">🔐 Change Password <button>Edit</button></div>
+  <div class="settings-toggle">📤 Export Data <button>Export</button></div>
+</div>
+
+<!-- ACCOUNT ACTIONS -->
+<div class="card">
+  <h3>Account Actions</h3>
+
+  <div class="account-actions">
+    <button>✏️ Edit Profile</button>
+    <button class="logout" onclick="logout()">🚪 Logout</button>
+    <button class="delete">⚠️ Delete Account</button>
+  </div>
+</div>
+
+</div>
+
+<script src="script/navbar.js"></script>
+<script src="script/common.js"></script>
+<script src="script/profile.js"></script>
+<script src="script/api.js"></script>
+<script src="script/authGuard.js"></script>
+
+
+<script>
+  checkAuth(); // 🔐 protect chat page
+</script>
+
+</body>
+</html>

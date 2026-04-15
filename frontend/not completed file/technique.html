@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meditation Technique</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4e73df, #1cc88a);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .start-btn {
+            background-color: #4e73df;
+            color: white;
+        }
+
+        .back-btn {
+            background-color: #858796;
+            color: white;
+            display: none;
+        }
+
+        .dashboard-btn {
+            background-color: #1cc88a;
+            color: white;
+            display: none;
+        }
+
+        .timer {
+            font-size: 28px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .complete {
+            font-size: 22px;
+            color: green;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 id="techTitle">Meditation</h2>
+    <p id="techDescription"></p>
+
+    <button id="startBtn" class="start-btn">Start</button>
+
+    <div class="timer" id="timerDisplay"></div>
+    <div class="complete" id="completeText">🎉 Session Complete!</div>
+
+    <button id="backBtn" class="back-btn">⬅ Back to Meditation</button>
+    <button id="dashboardBtn" class="dashboard-btn">Go to Dashboard</button>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const technique = params.get("type") || "breathing"; // fallback safe
+
+    const title = document.getElementById("techTitle");
+    const description = document.getElementById("techDescription");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const startBtn = document.getElementById("startBtn");
+    const backBtn = document.getElementById("backBtn");
+    const dashboardBtn = document.getElementById("dashboardBtn");
+    const completeText = document.getElementById("completeText");
+
+    let duration = 60; // default
+    let interval = null;
+
+    function loadTechnique() {
+        if (technique === "breathing") {
+            title.innerText = "Breathing Meditation";
+            description.innerText = "Inhale 4s, hold 4s, exhale 6s.";
+            duration = 60;
+        } 
+        else if (technique === "body") {
+            title.innerText = "Body Scan Meditation";
+            description.innerText = "Move awareness slowly from head to toe.";
+            duration = 90;
+        } 
+        else if (technique === "mindfulness") {
+            title.innerText = "Mindfulness Meditation";
+            description.innerText = "Observe thoughts without judgment.";
+            duration = 120;
+        }
+    }
+
+    function startMeditation() {
+        let timeLeft = duration;
+
+        startBtn.style.display = "none";
+        timerDisplay.innerText = formatTime(timeLeft);
+
+        interval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = formatTime(timeLeft);
+
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                finishSession();
+            }
+        }, 1000);
+    }
+
+    function finishSession() {
+        timerDisplay.innerText = "";
+        completeText.style.display = "block";
+        backBtn.style.display = "inline-block";
+        dashboardBtn.style.display = "inline-block";
+    }
+
+    function formatTime(seconds) {
+        let mins = Math.floor(seconds / 60);
+        let secs = seconds % 60;
+        return mins + ":" + (secs < 10 ? "0" + secs : secs);
+    }
+
+    startBtn.addEventListener("click", startMeditation);
+
+    backBtn.addEventListener("click", function() {
+        window.location.href = "meditation.html";
+    });
+
+    dashboardBtn.addEventListener("click", function() {
+        window.location.href = "dashboard.html";
+    });
+
+    loadTechnique();
+</script>
+
+</body>
+</html>

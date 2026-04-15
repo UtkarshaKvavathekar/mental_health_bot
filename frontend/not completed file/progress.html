@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Progress & Insights</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body{
+      background: linear-gradient(135deg,#e0f2fe,#f3e8ff);
+      min-height:100vh;
+    }
+    .card{
+      border-radius:20px;
+      box-shadow:0 15px 35px rgba(0,0,0,0.08);
+    }
+    .calendar-day{
+      width:35px;
+      height:35px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:8px;
+      margin:3px;
+      font-size:14px;
+    }
+    .done{
+      background:#4ade80;
+      color:white;
+    }
+    .missed{
+      background:#e5e7eb;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+  <a class="navbar-brand text-white" href="home.html">MindCare</a>
+  <div class="ms-auto">
+    <a href="dashboard.html" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
+    <a href="checkin.html" class="btn btn-outline-light btn-sm">Check-in</a>
+  </div>
+</nav>
+
+<div class="container mt-5">
+
+  <h3 class="mb-4">Progress & Insights</h3>
+
+  <!-- Mood Trend Chart -->
+  <div class="card p-4 mb-4">
+    <h5>30-Day Mood Trend</h5>
+    <canvas id="trendChart"></canvas>
+  </div>
+
+  <!-- Weekly Wellness Report -->
+  <div class="card p-4 mb-4">
+    <h5>Weekly Wellness Report</h5>
+    <div id="weeklyReport"></div>
+  </div>
+
+  <!-- Exercise Streak Calendar -->
+  <div class="card p-4 mb-4">
+    <h5>Exercise Streak Calendar</h5>
+    <div id="exerciseCalendar"></div>
+  </div>
+
+  <!-- AI Insight -->
+  <div class="card p-4 text-center">
+    <h5>AI Generated Insight</h5>
+    <p id="aiInsight"></p>
+  </div>
+
+</div>
+
+<script>
+
+// Get latest check-in
+let saved = JSON.parse(localStorage.getItem("latestCheckin"));
+
+// Generate fake 30-day history if not present
+let moodHistory = JSON.parse(localStorage.getItem("moodHistory")) || [];
+
+if(saved){
+  moodHistory.push(saved.mood);
+  if(moodHistory.length > 30){
+    moodHistory.shift();
+  }
+  localStorage.setItem("moodHistory", JSON.stringify(moodHistory));
+}
+
+// Fill with default values if empty
+if(moodHistory.length === 0){
+  moodHistory = Array(30).fill(3);
+}
+
+// 1️⃣ Mood Trend Chart
+new Chart(document.getElementById('trendChart'), {
+  type: 'line',
+  data: {
+    labels: moodHistory.map((_,i)=>i+1),
+    datasets: [{
+      label: 'Mood Level',
+      data: moodHistory,
+      tension:0.4,
+      fill:true
+    }]
+  },
+  options:{
+    scales:{
+      y:{ min:1, max:5 }
+    }
+  }
+});
+
+// 2️⃣ Weekly Wellness Report
+if(saved){
+  document.getElementById("weeklyReport").innerHTML = `
+    <p><strong>Wellness Score:</strong> ${saved.wellnessScore}%</p>
+    <p><strong>Stress Level:</strong> ${saved.stress}/10</p>
+    <p><strong>Exercise:</strong> ${saved.exerciseDone ? "Yes ✅" : "No ❌"}</p>
+    <p><strong>Current Streak:</strong> ${saved.streak} days 🔥</p>
+  `;
+}else{
+  document.getElementById("weeklyReport").innerHTML =
+    "<p>No data yet. Complete a check-in.</p>";
+}
+
+// 3️⃣ Exercise Streak Calendar (Last 14 Days)
+let calendar = document.getElementById("exerciseCalendar");
+let streak = saved ? saved.streak : 0;
+
+for(let i=1;i<=14;i++){
+  let day = document.createElement("div");
+  day.classList.add("calendar-day");
+
+  if(i <= streak){
+    day.classList.add("done");
+  }else{
+    day.classList.add("missed");
+  }
+
+  day.innerText = i;
+  calendar.appendChild(day);
+}
+
+// 4️⃣ AI Insight Generator
+if(saved){
+  if(saved.wellnessScore >= 80){
+    document.getElementById("aiInsight").innerText =
+      "You are maintaining a strong mental balance. Keep building this streak 💜";
+  }
+  else if(saved.wellnessScore >= 60){
+    document.getElementById("aiInsight").innerText =
+      "You're improving steadily. Try adding short breathing exercises.";
+  }
+  else{
+    document.getElementById("aiInsight").innerText =
+      "Stress seems higher this week. Consider journaling more regularly.";
+  }
+}else{
+  document.getElementById("aiInsight").innerText =
+    "Your personalized insight will appear after your first check-in.";
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serene | Session History</title>
+
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/history.css">
+</head>
+
+<body>
+  <div id="navbar"></div>
+  <!-- <div class="logo-box">S</div> -->
+
+<!-- <div class="header">
+  <div class="logo">📜 Serene Session History</div>
+  <div class="nav-links">
+    <a href="chat.html">Chat</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="history.html">History</a>
+    <a href="meditation.html">Meditation</a>
+    <a href="profile.html">Profile</a>
+    <a href="#" onclick="logout()">Logout</a>
+</div>
+
+</div> -->
+
+<div class="container">
+  <div id="historyLoading">Loading history...</div>
+  <div class="card">
+
+    <h2>Your Meditation History</h2>
+
+    <div class="stats">
+      <div class="stat-box">
+        <p>Total Sessions</p>
+        <h3 id="totalSessions">0</h3>
+      </div>
+      <div class="stat-box">
+        <p>Total Minutes</p>
+        <h3 id="totalMinutes">0</h3>
+      </div>
+      <div class="stat-box">
+        <p>Current Streak</p>
+        <h3 id="streakCount">0</h3>
+      </div>
+    </div>
+
+    <div id="historyContainer"></div>
+
+    <div class="buttons">
+      <button class="dashboard-btn" onclick="goDashboard()">⬅ Back to Dashboard</button>
+      <button class="clear-btn" onclick="clearHistory()">🗑 Clear History</button>
+    </div>
+
+  </div>
+</div>
+<div id="historyContainer"></div>
+
+<script src="script/navbar.js"></script>
+<script src="script/common.js"></script>
+<script src="script/history.js"></script>
+<script src="script/api.js"></script>
+<script src="script/authGuard.js"></script>
+
+
+<script>
+  checkAuth(); // 🔐 protect chat page
+</script>
+
+</body>
+</html>

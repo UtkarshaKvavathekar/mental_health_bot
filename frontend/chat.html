@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Serene | Chat</title>
+
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/chat.css" />
+    <link rel="icon" href="data:," />
+  </head>
+
+  <body class="light-bg">
+    <div id="navbar"></div>
+
+    <!-- CHAT -->
+    <div class="container">
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="message bot">
+            <div class="message-content">
+              Hello 🌿 I'm Serene. Tell me how you're feeling today.
+            </div>
+          </div>
+        </div>
+
+        <div class="input-area">
+          <input
+            type="text"
+            class="message-input"
+            id="messageInput"
+            placeholder="Type your feelings here..."
+          />
+
+          <button class="send-btn" id="sendBtn" type="button">
+            <svg viewBox="0 0 24 24">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOICE MODAL (ONLY FOR MEDITATION) -->
+    <div class="voice-modal" id="voiceModal">
+      <button class="close-btn" id="closeVoice">✕</button>
+
+      <div class="voice-content">
+        <div class="avatar">
+          <div class="avatar-inner">🌙</div>
+        </div>
+
+        <h2 class="voice-title">Serene Speaking</h2>
+        <p class="voice-subtitle">Preparing voice...</p>
+
+        <div class="visualizer">
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+        </div>
+
+        <button class="end-session-btn" id="endSession">Stop Speaking</button>
+      </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <!--<script src="script/navbar.js"></script>-->
+    <script src="script/api.js"></script>
+    <!--<script src="script/common.js"></script>-->
+    <!--<script src="script/authGuard.js"></script>-->
+
+    <!-- MUST BE BEFORE chat.js -->
+    <!--<script src="script/meditation.js"></script>-->
+
+    <script src="script/chat.js"></script>
+  </body>
+</html>

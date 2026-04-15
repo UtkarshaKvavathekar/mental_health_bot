@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Serene | Dashboard</title>
+
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+
+<body>
+<div id="navbar"></div>
+<!-- Navbar will be injected -->
+
+<div class="container">
+
+<!-- Welcome -->
+<div class="card welcome">
+  <h2 id="welcome">Loading...</h2>
+  <p id="streakText">Loading streak...</p>
+  <div id="dashboardLoading">Loading dashboard...</div>
+</div>
+
+<!-- Today's Focus -->
+<div class="card">
+  <h3>🎯 Today's Focus</h3>
+  <div class="focus-box">
+    <strong id="todayFocus">Loading...</strong>
+    <p id="focusTip" style="margin-top:8px; font-size:14px; color:#555;">
+      Loading...
+    </p>
+  </div>
+</div>
+
+<!-- Mood -->
+<div class="card">
+  <h3>How are you feeling today?</h3>
+  <div class="mood-options">
+    <button class="mood-btn">😊</button>
+    <button class="mood-btn">😐</button>
+    <button class="mood-btn">😔</button>
+    <button class="mood-btn">😰</button>
+    <button class="mood-btn">😡</button>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="card">
+  <h3>📊 Your Progress</h3>
+  <div class="stats-grid">
+
+    <div class="stat-box" style="background:#f1f8e9;">
+      <h4>🧘 Meditation Minutes</h4>
+      <p>-</p>
+      <small>This week</small>
+    </div>
+
+    <div class="stat-box" style="background:#ede7f6;">
+      <h4>💬 Chat Messages</h4>
+      <p>-</p>
+      <small>Sessions</small>
+    </div>
+
+    <div class="stat-box" style="background:#fff3e0;">
+      <h4>🔥 Streak</h4>
+      <p>-</p>
+      <small>Keep going!</small>
+    </div>
+
+  </div>
+</div>
+
+<!-- Chart -->
+<div class="card">
+  <h3>Weekly Mood Overview</h3>
+  <div class="chart-wrapper">
+
+    <div class="y-axis">
+      <span>100</span>
+      <span>75</span>
+      <span>50</span>
+      <span>25</span>
+      <span>0</span>
+    </div>
+
+    <div class="chart-bars" id="chartBars"></div>
+
+  </div>
+</div>
+
+<!-- Insight -->
+<div class="card">
+  <h3>Your Emotional Insight</h3>
+  <div class="insight" id="insight">
+    Loading...
+  </div>
+</div>
+
+<!-- Actions -->
+<div class="card">
+  <h3>⚡ Quick Actions</h3>
+  <div class="action-buttons">
+    <a href="chat.html" class="action-btn" style="background:#26a69a;">💬 Start Chat</a>
+    <a href="meditation.html" class="action-btn" style="background:#6b4c7c;">🧘 Start Meditation</a>
+    <a href="history.html" class="action-btn" style="background:#8e44ad;">📜 Session History</a>
+    <a href="profile.html" class="action-btn" style="background:#3949ab;">👤 View Profile</a>
+  </div>
+</div>
+
+</div>
+
+<script src="script/navbar.js"></script>
+<script src="script/common.js"></script>
+<script src="script/dashboard.js"></script>
+<script src="script/api.js"></script>
+<script src="script/authGuard.js"></script>
+
+
+<script>
+  checkAuth(); // 🔐 protect chat page
+</script>
+
+</body>
+</html>
