@@ -18,6 +18,7 @@ window.addEventListener("DOMContentLoaded", () => {
   messageInput = document.getElementById("messageInput");
   sendBtn = document.getElementById("sendBtn");
   chatMessages = document.getElementById("chatMessages");
+
   restoreChatState();
 
   console.log("SendBtn:", sendBtn);
@@ -28,6 +29,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   // SAFE CLICK HANDLER
+  setupEmojiPicker();
   sendBtn.onclick = function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -113,15 +115,16 @@ function appendMessage(sender, text) {
   content.textContent = text;
 
   msg.appendChild(content);
-
   chatMessages.appendChild(msg);
 
-  // SAVE CHAT STATE
-  saveChatState();
-
+  // 🔥 FIX: delay scroll + save together
   requestAnimationFrame(() => {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  });
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  setTimeout(() => {
+    saveChatState();   // 🔥 delayed save prevents jump
+  }, 0);
+});
 }
 
 function saveChatState() {
@@ -130,8 +133,14 @@ function saveChatState() {
 
 function restoreChatState() {
   const saved = localStorage.getItem("chat_backup");
+
   if (saved) {
     chatMessages.innerHTML = saved;
+
+    // 🔥 FORCE SCROLL AFTER RESTORE
+    setTimeout(() => {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 0);
   }
 }
 
@@ -145,6 +154,10 @@ function showTyping() {
   div.innerHTML = `<div class="message-content">Typing...</div>`;
 
   chatMessages.appendChild(div);
+
+  requestAnimationFrame(() => {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
 }
 
 function removeTyping() {
@@ -214,3 +227,35 @@ endSession?.addEventListener("click", stopVoice);
 window.addEventListener("click", () => {
   speechSynthesis.resume();
 });
+
+function setupEmojiPicker() {
+  const button = document.getElementById("emojiBtn");
+
+  const picker = new EmojiButton({
+    position: "top-start", // 👈 THIS FIXES YOUR ISSUE
+  });
+
+  let isOpen = false;
+
+  picker.on("emoji", (emoji) => {
+    messageInput.value += emoji;
+    messageInput.focus();
+
+    picker.hidePicker(); // 👈 closes picker after selection
+    isOpen = false;
+  });
+
+  button.addEventListener("click", () => {
+    if (isOpen) {
+      picker.hidePicker();
+      isOpen = false;
+    } else {
+      picker.showPicker(button);
+      isOpen = true;
+    }
+  });
+}
+
+function scrollToBottom() {
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
