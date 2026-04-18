@@ -63,8 +63,9 @@ def router_node(state:ChatState):
         return{"route":"emergency"}
     
     #RAG
-    if emotion in["sad","anxious","stressed","depressed","angry"]:
-        return{"route":"rag"}
+    if emotion in ["sad","anxious","stressed","depressed","angry"]:
+        if len(user_msg.split()) > 4:
+            return {"route": "rag"}
     
     #Normal convo
     return{"route":"llm"}
@@ -251,11 +252,3 @@ config={"configurable":{
 
 from langchain_core.messages import HumanMessage
 
-while True:
-    user_input=input("user: ")
-    if(user_input in ["exit",END]):
-        break
-    else:
-        result=app.invoke({"messages":[HumanMessage(content=user_input)]},
-                          config=config)
-        print("Ai: " +result["messages"][-1].content)

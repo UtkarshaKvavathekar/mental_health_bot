@@ -3,15 +3,11 @@ from emotion_classifier import EmotionClassifier
 
 classifier=EmotionClassifier()
 
-def emotion_node(state:Dict)->Dict:
-    user_input=state["input"]
+def emotion_node(state):
+    text = state["messages"][-1].content   # ✅ FIX
 
-    result=classifier.predict(user_input)
-    emotion=result["label"]
+    result = classifier.predict(text)
 
-    state["emotion"]=emotion
-
-    return state
-if __name__ == "__main__":
-    test_state = {"input": "I feel very sad today"}
-    print(emotion_node(test_state))
+    return {
+        "emotion": result["label"]
+    }

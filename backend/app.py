@@ -13,6 +13,9 @@ from models import ChatHistory
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
+from langgraph_main import app as langgraph_app
+from langchain_core.messages import HumanMessage
+
 Base.metadata.create_all(bind=engine)
 
 # 🚀 Create FastAPI app
@@ -52,26 +55,23 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
 
     text = req.message
 
-    emotion = classifier.predict(text)
-    context = retrieve_context(text)
+    # 🔥 Call LangGraph instead of manual logic
+    result = langgraph_app.invoke(
+    {
+        "messages": [HumanMessage(content=text)],
+        
+    },
+    config={
+        "configurable": {
+            "thread_id": "1"
+        }
+    }
+)
 
-    if "No relevant context found" in context:
-        reply = f"""
-I hear you. You're feeling {emotion['label']} right now. 💙
-It's okay to feel this way. I'm here with you.
-Would you like to talk more about what's troubling you?
-"""
-    else:
-        reply = f"""
-I understand you're feeling {emotion['label']}. 💙
-Here is something that might help you:
-{context[:500]}
-Take a deep breath. You're not alone.
-"""
-
-    # ✅ SAVE CHAT (IMPORTANT)
+    reply = result.get("messages", [])[-1].content if result.get("messages") else "Sorry, something went wrong."
+    # ✅ Save chat
     chat_entry = ChatHistory(
-        user_id=1,  # ⚠️ TEMP (we improve later)
+        user_id=1,   # (we'll fix this later with token)
         message=text,
         response=reply
     )
@@ -80,9 +80,8 @@ Take a deep breath. You're not alone.
     db.commit()
 
     return {
-    "emotion": emotion,
-    "reply": reply
-}
+        "reply": reply
+    }
 
 @app.get("/history/{user_id}")
 def get_history(user_id: int, db: Session = Depends(get_db)):
