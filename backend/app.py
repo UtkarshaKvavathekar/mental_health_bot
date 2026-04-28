@@ -40,6 +40,7 @@ classifier = EmotionClassifier()
 # 📩 Request format from frontend
 class ChatRequest(BaseModel):
     message: str
+    user_id:int
 
 
 def get_db():
@@ -54,8 +55,9 @@ def get_db():
 def chat(req: ChatRequest, db: Session = Depends(get_db)):
 
     text = req.message
+    user_id=req.user_id
 
-    # 🔥 Call LangGraph instead of manual logic
+    #  Call LangGraph instead of manual logic
     result = langgraph_app.invoke(
     {
         "messages": [HumanMessage(content=text)],
@@ -63,7 +65,7 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
     },
     config={
         "configurable": {
-            "thread_id": "1"
+            "thread_id": str(user_id)
         }
     }
 )
@@ -71,7 +73,7 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
     reply = result.get("messages", [])[-1].content if result.get("messages") else "Sorry, something went wrong."
     # ✅ Save chat
     chat_entry = ChatHistory(
-        user_id=1,   # (we'll fix this later with token)
+        user_id=user_id,   # (we'll fix this later with token)
         message=text,
         response=reply
     )

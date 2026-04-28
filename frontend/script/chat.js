@@ -73,28 +73,46 @@ async function sendMessage() {
   messageInput.value = "";
 
   try {
-    showTyping();
+  showTyping();
 
-    console.log("Calling /chat API...");
+  console.log("Calling /chat API...");
 
-    const data = await apiRequest("/chat", "POST", {
-      message: message,
-    });
+  //  GET USER FROM LOCALSTORAGE
+  const user = JSON.parse(localStorage.getItem("user"));
+  const user_id = user?.id;
 
-    console.log("API response:", data);
+  console.log("Sending:", {
+  message: message,
+  user_id: user_id,
+  });
 
-    removeTyping();
 
-    if (data && data.reply) {
-      appendMessage("bot", data.reply);
+  // SAFETY CHECK
+  if (!user_id) {
+    console.error("User not found");
+    appendMessage("bot", "⚠ Please login again");
+    return;
+  }
 
-      if (data.emotion?.label) {
-        appendMessage("bot", `<small>Emotion: ${data.emotion.label}</small>`);
-      }
-    } else {
-      appendMessage("bot", "⚠ Invalid response from server");
+  const data = await apiRequest("/chat", "POST", {
+    message: message,
+    user_id: Number(user_id),   // 👈 THIS LINE FIXES EVERYTHING
+  });
+
+  console.log("API response:", data);
+
+  removeTyping();
+
+  if (data && data.reply) {
+    appendMessage("bot", data.reply);
+
+    if (data.emotion?.label) {
+      appendMessage("bot", `<small>Emotion: ${data.emotion.label}</small>`);
     }
-  } catch (err) {
+  } else {
+    appendMessage("bot", "⚠ Invalid response from server");
+  }
+} catch (err) {
     removeTyping();
     console.error("Chat Error:", err);
     appendMessage("bot", "⚠ Backend error");
@@ -128,12 +146,17 @@ function appendMessage(sender, text) {
 }
 
 function saveChatState() {
-  localStorage.setItem("chat_backup", chatMessages.innerHTML);
+ const user = JSON.parse(localStorage.getItem("user"));
+ const user_id = user?.id;
+
+localStorage.setItem(`chat_backup_${user_id}`, chatMessages.innerHTML);
 }
 
 function restoreChatState() {
-  const saved = localStorage.getItem("chat_backup");
+  const user = JSON.parse(localStorage.getItem("user"));
+const user_id = user?.id;
 
+const saved = localStorage.getItem(`chat_backup_${user_id}`);
   if (saved) {
     chatMessages.innerHTML = saved;
 

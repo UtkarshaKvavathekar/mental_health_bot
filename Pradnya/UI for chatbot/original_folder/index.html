@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serene - Mental Health Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Light Mode Backgrounds */
+        .light-bg {
+            background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 16px 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: #26A69A;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1A202C;
+        }
+
+        .toggle-switch {
+            display: flex;
+            background: #E0E0E0;
+            border-radius: 25px;
+            padding: 4px;
+        }
+
+        .toggle-btn {
+            padding: 10px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .toggle-btn.active {
+            background: white;
+            color: #1A202C;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            line-height: 1.6;
+        }
+
+        .message.bot .message-content {
+            background: #F5F5F5;
+            color: #1A202C;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user .message-content {
+            background: #26A69A;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .read-aloud {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .read-aloud:hover {
+            color: #26A69A;
+        }
+
+        /* Input Area */
+        .input-area {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #E0E0E0;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .message-input:focus {
+            border-color: #26A69A;
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            background: #26A69A;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background: #1F8A7E;
+        }
+
+        .send-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1A202C;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: translateX(-50%) translateY(-2px);
+        }
+
+        .fab.speaking {
+            background: #26A69A;
+            box-shadow: 0 0 0 0 rgba(38, 166, 154, 0.7);
+            animation: pulse-glow 1.5s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(38, 166, 154, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 0 0 20px rgba(38, 166, 154, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(38, 166, 154, 0);
+            }
+        }
+
+        /* Voice Mode Modal */
+        .voice-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 15, 30, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-modal.active {
+            display: flex;
+        }
+
+        .voice-content {
+            text-align: center;
+            color: white;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #26A69A, #4DB6AC);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 0 40px rgba(38, 166, 154, 0.4);
+        }
+
+        .avatar-inner {
+            width: 108px;
+            height: 108px;
+            border-radius: 50%;
+            background: #0A0F1E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+
+        .voice-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .voice-subtitle {
+            font-size: 16px;
+            color: #B0B0B0;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .visualizer {
+            width: 300px;
+            height: 80px;
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .visualizer-bar {
+            width: 4px;
+            background: linear-gradient(180deg, #26A69A, #4DB6AC);
+            border-radius: 2px;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .visualizer-bar:nth-child(1) {
+            height: 20px;
+            animation-delay: 0s;
+        }
+
+        .visualizer-bar:nth-child(2) {
+            height: 40px;
+            animation-delay: 0.1s;
+        }
+
+        .visualizer-bar:nth-child(3) {
+            height: 60px;
+            animation-delay: 0.2s;
+        }
+
+        .visualizer-bar:nth-child(4) {
+            height: 50px;
+            animation-delay: 0.3s;
+        }
+
+        .visualizer-bar:nth-child(5) {
+            height: 70px;
+            animation-delay: 0.4s;
+        }
+
+        .visualizer-bar:nth-child(6) {
+            height: 50px;
+            animation-delay: 0.5s;
+        }
+
+        .visualizer-bar:nth-child(7) {
+            height: 60px;
+            animation-delay: 0.6s;
+        }
+
+        .visualizer-bar:nth-child(8) {
+            height: 40px;
+            animation-delay: 0.7s;
+        }
+
+        .visualizer-bar:nth-child(9) {
+            height: 20px;
+            animation-delay: 0.8s;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scaleY(0.5);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        .session-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .session-btn {
+            padding: 14px 40px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .start-session-btn {
+            background: #26A69A;
+            color: white;
+        }
+
+        .start-session-btn:hover {
+            background: #1F8A7E;
+            box-shadow: 0 4px 16px rgba(38, 166, 154, 0.4);
+        }
+
+
+        .start-session-btn.glow {
+            background: #26A69A;
+            box-shadow: 0 0 0 0 rgba(38, 166, 154, 0.7);
+            animation: pulse-glow 1.5s infinite;
+        }
+
+        .end-session-btn {
+            background: #6B4C7C;
+            color: white;
+        }
+
+        .end-session-btn:hover {
+            background: #7F5A94;
+            box-shadow: 0 4px 16px rgba(107, 76, 124, 0.4);
+        }
+
+        /* Quick Relief Dashboard */
+        .relief-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .relief-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 12px;
+        }
+
+        .relief-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 48px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .relief-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .relief-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .relief-card.blue {
+            background: #E3F2FD;
+        }
+
+        .relief-card.green {
+            background: #E8F5E9;
+        }
+
+        .relief-card.purple {
+            background: #F3E5F5;
+        }
+
+        /* .relief-card.yellow {
+            background: #FFF9C4;
+        } */
+
+        .relief-card.indigo {
+            background: #E8EAF6;
+        }
+
+        /* .relief-card.pink {
+            background: #FCE4EC;
+        } */
+
+        .relief-card.teal {
+            background: #E0F2F1;
+        }
+
+        .relief-card.orange {
+            background: #FFF3E0;
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1A202C;
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Hide/Show Sections */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="light-bg">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo">S</div>
+            <div class="brand-name">Mega Bot</div>
+        </div>
+        <div class="toggle-switch">
+            <button class="toggle-btn active" id="chatToggle">Chat</button>
+            <button class="toggle-btn" id="reliefToggle">Quick Relief</button>
+        </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="container" id="chatSection">
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div>
+                        <div class="message-content">
+                            Hello there, dear one. I'm Mega Bot, and I'm here to listen without judgment. This is your
+                            safe space—a place where your thoughts and feelings matter. Whether you're feeling
+                            overwhelmed, anxious, or just need someone to talk to, I'm here for you. Take a deep breath,
+                            and when you're ready, share what's on your mind. You're not alone in this.
+                        </div>
+                        <div class="read-aloud">
+                            <span>🔊</span>
+                            <span>Read Aloud</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="text" class="message-input" placeholder="Type your feelings here..." id="messageInput">
+                <button class="send-btn" id="sendBtn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Relief Dashboard -->
+    <div class="container relief-container hidden" id="reliefSection">
+        <h1 class="relief-title">How can I help you right now?</h1>
+        <p class="relief-subtitle">Select a technique to begin immediately.</p>
+        <div class="cards-grid">
+            <div class="relief-card blue" data-technique="breathing" data-file="breath-4-5-7.html">
+                <div class="card-icon">😮‍💨</div>
+                <div class="card-title">4-7-8 Breathing</div>
+                <div class="card-description">A rhythmic breathing pattern to reduce anxiety quickly.</div>
+            </div>
+            <div class="relief-card teal" data-technique="boxbreathing" data-file="box-breathing.html">
+                <div class="card-icon">📦</div>
+                <div class="card-title">Box Breathing</div>
+                <div class="card-description">A balanced 4-4-4-4 breathing technique used by Navy SEALs.</div>
+            </div>
+            <div class="relief-card orange" data-technique="anxietybreathing" data-file="anxity-relife.html">
+                <div class="card-icon">🌬️</div>
+                <div class="card-title">Anxiety Release Breathing</div>
+                <div class="card-description">Quick relief breathing for panic and overwhelm.</div>
+            </div>
+            <div class="relief-card green" data-technique="grounding" data-file="grounding.html">
+                <div class="card-icon">🌳</div>
+                <div class="card-title">5-4-3-2-1 Grounding</div>
+                <div class="card-description">Connect with your senses to stop a panic attack.</div>
+            </div>
+            <div class="relief-card purple" data-technique="bodyscan">
+                <div class="card-icon">🧘</div>
+                <div class="card-title">Body Scan</div>
+                <div class="card-description">Release physical tension from head to toe.</div>
+            </div>
+            <!-- <div class="relief-card yellow" data-technique="reframe">
+                <div class="card-icon">💡</div>
+                <div class="card-title">Positive Reframe</div>
+                <div class="card-description">Shift your perspective on a stressful thought.</div>
+            </div> -->
+            <div class="relief-card indigo" data-technique="sleep">
+                <div class="card-icon">🌙</div>
+                <div class="card-title">Sleep Aid</div>
+                <div class="card-description">Drift off with a soothing visualization.</div>
+            </div>
+            <!-- <div class="relief-card pink" data-technique="affirmations">
+                <div class="card-icon">❤️</div>
+                <div class="card-title">Daily Affirmations</div>
+                <div class="card-description">Boost your self-esteem with kind words.</div>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" id="voiceBtn">
+        <span>🎤</span>
+        <span id="voiceBtnText">Speak</span>
+    </button>
+
+    <!-- Voice Mode Modal -->
+    <div class="voice-modal" id="voiceModal">
+        <button class="close-btn" id="closeVoice">✕</button>
+        <div class="voice-content">
+            <div class="avatar">
+                <div class="avatar-inner">🌙</div>
+            </div>
+            <h2 class="voice-title" id="voiceTitle">Megabot Live</h2>
+            <p class="voice-subtitle" id="voiceSubtitle">Connecting to your safe space...</p>
+            <div class="visualizer">
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+            </div>
+            <div class="session-buttons">
+                <button class="session-btn start-session-btn" id="startSession">Start Exercise</button>
+                <button class="session-btn end-session-btn" id="endSession">End Session</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Breathing explanations
+        const breathingExplanations = {
+            'boxbreathing': "Sit straight and relax your shoulders. We'll practice box breathing together - breathe in for 4, hold for 4, breathe out for 4, and hold for 4. Let's begin.",
+            'breathing': "Find a comfortable position and close your eyes if you wish. We'll use the 4-7-8 technique - inhale for 4, hold for 7, exhale for 8. Ready? Let's start.",
+            'anxietybreathing': "Take a moment to settle in. This anxiety release breathing will help calm your mind - inhale for 4, hold for 4, exhale slowly for 6, then hold for 2. Let's begin together.",
+            'grounding':"Take a moment to settle in. This anxiety release grounding technique will help calm your mind"
+        };
+
+        // Techniques that open a new window
+        const breathingTechniques = ['boxbreathing', 'breathing', 'anxietybreathing','grounding'];
+
+        let currentTechnique = null;
+        let currentTechniqueFile = null;
+
+        // Toggle between Chat and Quick Relief
+        const chatToggle = document.getElementById('chatToggle');
+        const reliefToggle = document.getElementById('reliefToggle');
+        const chatSection = document.getElementById('chatSection');
+        const reliefSection = document.getElementById('reliefSection');
+
+        chatToggle.addEventListener('click', () => {
+            chatToggle.classList.add('active');
+            reliefToggle.classList.remove('active');
+            chatSection.classList.remove('hidden');
+            reliefSection.classList.add('hidden');
+        });
+
+        reliefToggle.addEventListener('click', () => {
+            reliefToggle.classList.add('active');
+            chatToggle.classList.remove('active');
+            reliefSection.classList.remove('hidden');
+            chatSection.classList.add('hidden');
+        });
+
+        // Chat functionality
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatMessages = document.getElementById('chatMessages');
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message) {
+                const userMsg = document.createElement('div');
+                userMsg.className = 'message user';
+                userMsg.innerHTML = `<div class="message-content">${message}</div>`;
+                chatMessages.appendChild(userMsg);
+                messageInput.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // Simulate bot response
+                setTimeout(() => {
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'message bot';
+                    botMsg.innerHTML = `
+                        <div>
+                            <div class="message-content">Thank you for sharing that with me. I'm here to support you. How are you feeling right now?</div>
+                            <div class="read-aloud">
+                                <span>🔊</span>
+                                <span>Read Aloud</span>
+                            </div>
+                        </div>
+                    `;
+                    chatMessages.appendChild(botMsg);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    const readAloudBtn = botMsg.querySelector('.read-aloud');
+                    readAloudBtn.addEventListener('click', () => startReadAloud(readAloudBtn));
+                }, 1000);
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Voice mode
+        const voiceBtn = document.getElementById('voiceBtn');
+        const voiceBtnText = document.getElementById('voiceBtnText');
+        const voiceModal = document.getElementById('voiceModal');
+        const closeVoice = document.getElementById('closeVoice');
+        const startSession = document.getElementById('startSession');
+        const endSession = document.getElementById('endSession');
+        const voiceTitle = document.getElementById('voiceTitle');
+        const voiceSubtitle = document.getElementById('voiceSubtitle');
+
+        let isListening = false;
+        let silenceTimer = null;
+
+        // Speak button - single click to start, auto-stop after 4 seconds of silence
+        voiceBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            if (!isListening) {
+                isListening = true;
+                voiceBtn.classList.add('speaking');
+                voiceBtnText.textContent = 'Listening...';
+
+                silenceTimer = setTimeout(() => {
+                    if (isListening) {
+                        isListening = false;
+                        voiceBtn.classList.remove('speaking');
+                        voiceBtnText.textContent = 'Speak';
+                    }
+                }, 4000);
+            } else {
+                isListening = false;
+                clearTimeout(silenceTimer);
+                voiceBtn.classList.remove('speaking');
+                voiceBtnText.textContent = 'Speak';
+            }
+        });
+
+        // Start Exercise button handler
+        startSession.addEventListener('click', () => {
+            if (currentTechnique && breathingTechniques.includes(currentTechnique) && currentTechniqueFile) {
+                // Open the breathing exercise in a new window
+                window.open(currentTechniqueFile, '_blank');
+                // Close the modal
+                voiceModal.classList.remove('active');
+                if ('speechSynthesis' in window) {
+                    speechSynthesis.cancel();
+                }
+            }
+            // For non-breathing techniques, do nothing (as requested)
+        });
+
+        // End Session button handler
+        endSession.addEventListener('click', () => {
+            voiceModal.classList.remove('active');
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+            }
+            currentTechnique = null;
+            currentTechniqueFile = null;
+        });
+
+        // Read aloud functionality
+        function startReadAloud(readAloudElement) {
+            const messageContent = readAloudElement.previousElementSibling.textContent;
+            voiceModal.classList.add('active');
+            voiceTitle.textContent = 'Serene Live';
+            voiceSubtitle.textContent = messageContent;
+
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(messageContent);
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                utterance.onend = () => {
+                    setTimeout(() => {
+                        voiceModal.classList.remove('active');
+                    }, 500);
+                };
+                speechSynthesis.speak(utterance);
+            } else {
+                setTimeout(() => {
+                    voiceModal.classList.remove('active');
+                }, 5000);
+            }
+        }
+
+        document.querySelectorAll('.read-aloud').forEach(btn => {
+            btn.addEventListener('click', () => startReadAloud(btn));
+        });
+
+        closeVoice.addEventListener('click', () => {
+            voiceModal.classList.remove('active');
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+            }
+            currentTechnique = null;
+            currentTechniqueFile = null;
+        });
+
+        // Quick Relief cards
+        const reliefCards = document.querySelectorAll('.relief-card');
+
+        reliefCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const technique = card.getAttribute('data-technique');
+                const techniqueFile = card.getAttribute('data-file');
+                const techniqueName = card.querySelector('.card-title').textContent;
+
+                currentTechnique = technique;
+                currentTechniqueFile = techniqueFile;
+
+                // Show voice modal with explanation
+                voiceModal.classList.add('active');
+                voiceTitle.textContent = techniqueName;
+
+                // Remove glow class first
+                startSession.classList.remove('glow');
+
+                if (breathingExplanations[technique]) {
+                    // Breathing techniques: show explanation and enable "Start Exercise"
+                    voiceSubtitle.textContent = breathingExplanations[technique];
+
+                    // Add glow effect to start button
+                    startSession.classList.add('glow');
+
+                    if ('speechSynthesis' in window) {
+                        const utterance = new SpeechSynthesisUtterance(breathingExplanations[technique]);
+                        utterance.rate = 0.9;
+                        utterance.pitch = 1;
+                        speechSynthesis.speak(utterance);
+                    }
+                } else {
+                    // Other techniques: show generic message
+                    voiceSubtitle.textContent = `Let's begin the ${techniqueName} exercise together. Find a comfortable position and let me guide you through this.`;
+
+                    if ('speechSynthesis' in window) {
+                        const utterance = new SpeechSynthesisUtterance(voiceSubtitle.textContent);
+                        utterance.rate = 0.9;
+                        utterance.pitch = 1;
+                        speechSynthesis.speak(utterance);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
