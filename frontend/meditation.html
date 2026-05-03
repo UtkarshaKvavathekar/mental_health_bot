@@ -1,101 +1,144 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Serene | Quick Relief</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Serene | Quick Relief</title>
 
-<link rel="stylesheet" href="css/common.css" />
-<link rel="stylesheet" href="css/chat.css" />
-</head>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/meditation.css" />
+  </head>
 
-<body class="light-bg">
+  <body class="light-bg">
+    <!-- ================= NAVBAR ================= -->
+    <div id="navbar"></div>
 
-<!-- ================= NAVBAR ================= -->
-<div id="navbar"></div>
+    <!-- ================= MAIN WRAPPER ================= -->
+    <div class="container">
+      <!-- ================= RELIEF CARDS SECTION ================= -->
+      <div class="relief-container" id="reliefUI">
+        <h1 class="relief-title">How can I help you right now?</h1>
+        <p class="relief-subtitle">Select a technique to begin immediately.</p>
 
-<!-- ================= MAIN WRAPPER ================= -->
-<div class="container">
+        <div class="cards-grid">
+          <div class="relief-card blue" data-technique="breathing">
+            <div class="card-icon">😮‍💨</div>
+            <div class="card-title">4-7-8 Breathing</div>
+            <div class="card-description">
+              A rhythmic breathing pattern to reduce anxiety quickly.
+            </div>
+          </div>
 
-  <!-- ================= RELIEF CARDS SECTION ================= -->
-  <div class="relief-container" id="reliefUI">
+          <div class="relief-card green" data-technique="grounding">
+            <div class="card-icon">🌳</div>
+            <div class="card-title">5-4-3-2-1 Grounding</div>
+            <div class="card-description">
+              Connect with your senses to stop a panic attack.
+            </div>
+          </div>
 
-    <h1 class="relief-title">How can I help you right now?</h1>
-    <p class="relief-subtitle">Select a technique to begin immediately.</p>
+          <div class="relief-card purple" data-technique="bodyscan">
+            <div class="card-icon">🧘</div>
+            <div class="card-title">Body Scan</div>
+            <div class="card-description">
+              Release physical tension from head to toe.
+            </div>
+          </div>
 
-    <div class="cards-grid">
+          <div class="relief-card yellow" data-technique="reframe">
+            <div class="card-icon">💡</div>
+            <div class="card-title">Positive Reframe</div>
+            <div class="card-description">
+              Shift your perspective on a stressful thought.
+            </div>
+          </div>
 
-      <div class="relief-card blue" data-technique="breathing">
-        <div class="card-icon">😮‍💨</div>
-        <div class="card-title">4-7-8 Breathing</div>
-        <div class="card-description">
-          A rhythmic breathing pattern to reduce anxiety quickly.
+          <div class="relief-card indigo" data-technique="sleep">
+            <div class="card-icon">🌙</div>
+            <div class="card-title">Sleep Aid</div>
+            <div class="card-description">
+              Drift off with a soothing visualization.
+            </div>
+          </div>
+
+          <div class="relief-card pink" data-technique="affirmations">
+            <div class="card-icon">❤️</div>
+            <div class="card-title">Daily Affirmations</div>
+            <div class="card-description">
+              Boost your self-esteem with kind words.
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="relief-card green" data-technique="grounding">
-        <div class="card-icon">🌳</div>
-        <div class="card-title">5-4-3-2-1 Grounding</div>
-        <div class="card-description">
-          Connect with your senses to stop a panic attack.
+      <!-- ================= MEDITATION ANIMATION UI ================= -->
+      <div class="meditationContainer" id="meditationUI" style="display: none">
+        <div class="circle-wrapper">
+          <div id="circle"></div>
         </div>
-      </div>
-
-      <div class="relief-card purple" data-technique="bodyscan">
-        <div class="card-icon">🧘</div>
-        <div class="card-title">Body Scan</div>
-        <div class="card-description">
-          Release physical tension from head to toe.
-        </div>
-      </div>
-
-      <div class="relief-card yellow" data-technique="reframe">
-        <div class="card-icon">💡</div>
-        <div class="card-title">Positive Reframe</div>
-        <div class="card-description">
-          Shift your perspective on a stressful thought.
-        </div>
-      </div>
-
-      <div class="relief-card indigo" data-technique="sleep">
-        <div class="card-icon">🌙</div>
-        <div class="card-title">Sleep Aid</div>
-        <div class="card-description">
-          Drift off with a soothing visualization.
-        </div>
-      </div>
-
-      <div class="relief-card pink" data-technique="affirmations">
-        <div class="card-icon">❤️</div>
-        <div class="card-title">Daily Affirmations</div>
-        <div class="card-description">
-          Boost your self-esteem with kind words.
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ================= MEDITATION ANIMATION UI ================= -->
-  <div class="meditationContainer" id="meditationUI" style="display:none;">
-
-    <div id="circle"></div>
-
-    <h1 id="title">Get Ready...</h1>
-    <p id="subtitle">Relax your body</p>
-
-  </div>
-
+        <!--Intro -->
+        <div id="introBox">
+  <h2 class="intro-text">Get Ready...</h2>
+  <p class="intro-sub">Relax and follow the instructions</p>
 </div>
 
-<!-- ================= SCRIPTS ================= -->
-<script src="script/common.js"></script>
-<script src="script/authGuard.js"></script>
-<script src="script/navbar.js"></script>
+        <!-- 🌳 Grounding UI (ADD THIS) -->
+  <div id="groundingBox" style="display:none;">
+    <div class="grounding-card">
+      <h2 id="groundingStep">Focus...</h2>
+    </div>
+  </div>
+   <!--BodyScan -->
+  <div id="bodyScanBox" style="display:none;">
+  <div class="body">
+    <div class="part" id="head">Head</div>
+    <div class="part" id="shoulders">Shoulders</div>
+    <div class="part" id="chest">Chest</div>
+    <div class="part" id="arms">Arms</div>
+    <div class="part" id="stomach">Stomach</div>
+    <div class="part" id="legs">Legs</div>
+  </div>
+</div>
+<!--Affiramation -->
+<div id="affirmationBox" style="display:none;">
+  <div class="affirm-card">
+    <h2 id="affirmText">You are calm</h2>
+  </div>
+</div>
+<!--Sleep -->
+<div id="sleepBox" style="display:none;">
+  <div class="sleep-bg">
+    <canvas id="starsCanvas"></canvas>
+    <div class="sleep-center">
+      <h2 id="sleepText">Relax…</h2>
+    </div>
+  </div>
+</div>
+<!--Reframe -->
+<div id="reframeBox" style="display:none;">
+  <div class="reframe-card">
+    <textarea id="reframeInput" placeholder="What’s bothering you?"></textarea>
+    <button id="reframeBtn">Reframe</button>
+    <p id="reframeOutput"></p>
+  </div>
+</div>
+        <h1 id="title">Get Ready...</h1>
+        <p id="subtitle">Relax your body</p>
+        <div class="controls">
+          <button id="pauseBtn">Pause</button>
+          <button id="resumeBtn">Resume</button>
+          <button id="stopBtn">Stop</button>
+        </div>
+      </div>
+    </div>
 
-<!-- meditation logic -->
-<script src="script/meditationEngine.js"></script>
-<script src="script/meditation.js"></script>
+    <!-- ================= SCRIPTS ================= -->
+    <script src="script/common.js"></script>
+    <script src="script/authGuard.js"></script>
+    <script src="script/navbar.js"></script>
 
-</body>
+    <!-- meditation logic -->
+    <script src="script/meditationEngine.js"></script>
+    <script src="script/meditation.js"></script>
+  </body>
 </html>

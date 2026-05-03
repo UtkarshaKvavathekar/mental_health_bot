@@ -3,7 +3,11 @@ document.querySelectorAll(".relief-card").forEach(card => {
 
     const technique = card.getAttribute("data-technique");
 
-    // go to chat page WITH PARAM
-    window.location.href = `chat.html?exercise=${technique}`;
+    // 🔥 switch UI
+    document.getElementById("reliefUI").style.display = "none";
+    document.getElementById("meditationUI").style.display = "flex";
+
+    // 🔥 start meditation
+    window.MeditationEngine.intro(technique);
   });
 });
