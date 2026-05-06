@@ -16,7 +16,10 @@ class ChatHistory(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
+    chat_id = Column(String)
+    title = Column(String, nullable=True) 
     message = Column(Text)
     response = Column(Text)
+    
 
     user = relationship("User")
