@@ -1,7 +1,7 @@
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -11,66 +11,78 @@ body {
   color: #1a202c;
 }
 
-.container{
-  max-width:1200px;
-  margin:auto;
-  padding:40px 20px;
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 20px;
 }
 
-.relief-title{
-  font-size:40px;
-  font-weight:700;
-  text-align:center;
-  margin-bottom:10px;
+.relief-title {
+  font-size: 40px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
-.relief-subtitle{
-  text-align:center;
-  color:#555;
-  margin-bottom:40px;
+.relief-subtitle {
+  text-align: center;
+  color: #555;
+  margin-bottom: 40px;
 }
 
-.cards-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:24px;
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
 }
 
-.relief-card{
-  background:#fff;
-  border-radius:18px;
-  padding:28px;
-  cursor:pointer;
-  transition:.25s;
-  box-shadow:0 8px 18px rgba(0,0,0,.08);
+.relief-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 28px;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
 }
 
-.relief-card:hover{
-  transform:translateY(-6px);
+.relief-card:hover {
+  transform: translateY(-6px);
 }
 
-.card-icon{
-  font-size:42px;
-  margin-bottom:14px;
+.card-icon {
+  font-size: 42px;
+  margin-bottom: 14px;
 }
 
-.card-title{
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:10px;
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.card-description{
-  color:#666;
-  line-height:1.5;
+.card-description {
+  color: #666;
+  line-height: 1.5;
 }
 
-.blue{background:#e3f2fd;}
-.green{background:#e8f5e9;}
-.purple{background:#f3e5f5;}
-.yellow{background:#fff9c4;}
-.indigo{background:#e8eaf6;}
-.pink{background:#fce4ec;}
+.blue {
+  background: #e3f2fd;
+}
+.green {
+  background: #e8f5e9;
+}
+.purple {
+  background: #f3e5f5;
+}
+.yellow {
+  background: #fff9c4;
+}
+.indigo {
+  background: #e8eaf6;
+}
+.pink {
+  background: #fce4ec;
+}
 
 #circle {
   width: 200px;
@@ -78,7 +90,9 @@ body {
   border-radius: 50%;
   background: radial-gradient(circle, #7ed6df, #22a6b3);
   box-shadow: 0 0 40px rgba(34, 166, 179, 0.5);
-  transition: transform 4s ease, box-shadow 0.5s;
+  transition:
+    transform 4s ease,
+    box-shadow 0.5s;
 }
 
 .expand {
@@ -97,7 +111,7 @@ body {
   align-items: center;
   height: 75vh;
   text-align: center;
-  gap: 20px; 
+  gap: 20px;
 }
 
 #title {
@@ -149,7 +163,7 @@ body {
 }
 
 .circle-wrapper {
-  height: 260px;   /* enough space for expansion */
+  height: 260px; /* enough space for expansion */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,7 +174,7 @@ body {
   padding: 30px;
   border-radius: 20px;
   background: white;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -198,9 +212,15 @@ body {
 }
 
 @keyframes pulseAnim {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .affirm-card {
@@ -226,8 +246,14 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .sleep-bg {
@@ -267,7 +293,7 @@ body {
   padding: 24px;
   border-radius: 16px;
   background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -303,7 +329,7 @@ body {
   justify-content: center;
   height: 75vh;
   text-align: center;
-   z-index: 5;
+  z-index: 5;
 }
 
 .intro-text {

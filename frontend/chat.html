@@ -10,43 +10,97 @@
     <link rel="icon" href="data:," />
   </head>
 
-  <body class="chat-page">
-    <div class="chat-shell">
-      <!-- SIDEBAR -->
-      <aside class="chat-sidebar" id="chatSidebar">
-        <div class="sidebar-top">
-          <button id="newChatBtn" class="new-chat-btn">+ New chat</button>
-        </div>
+  <body class="light-bg">
+    <div id="navbar"></div>
 
-        <div id="chatHistory" class="chat-history"></div>
-      </aside>
+    <!-- CHAT -->
+    <!-- CHAT -->
+<div class="chat-layout">
+  <!-- mobile overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-      <!-- MAIN -->
-      <main class="chat-main">
-        <header class="chat-header">
-          <button class="menu-btn" id="menuBtn">☰</button>
-          <div class="chat-header-title">Serene Assistant</div>
-        </header>
-
-        <section id="chatMessages" class="chat-messages"></section>
-
-        <footer class="chat-footer">
-          <div class="input-wrapper">
-            <input
-              id="messageInput"
-              class="message-input"
-              type="text"
-              placeholder="Message Serene..."
-              autocomplete="off"
-            />
-
-            <button id="sendBtn" class="send-btn">➤</button>
-          </div>
-        </footer>
-      </main>
+  <!-- sidebar -->
+  <aside class="chat-sidebar" id="chatSidebar">
+    <div class="sidebar-header">
+      <button class="new-chat-btn" id="newChatBtn">+ New Chat</button>
+      <button class="sidebar-close" id="sidebarClose">✕</button>
     </div>
 
+    <div class="chat-history" id="chatHistory"></div>
+  </aside>
+
+  <!-- main -->
+  <div class="chat-main">
+    <button class="mobile-sidebar-toggle" id="mobileSidebarToggle">☰</button>
+
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+          <div class="message-content">
+            Hello 🌿 I'm Serene. Tell me how you're feeling today.
+          </div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <div class="input-wrapper">
+          <input
+            type="text"
+            class="message-input"
+            id="messageInput"
+            placeholder="Type your feelings here..."
+          />
+
+          <button id="emojiBtn" class="emoji-btn" type="button">😊</button>
+        </div>
+
+        <button class="send-btn" id="sendBtn" type="button">
+          <svg viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    <!-- VOICE MODAL (ONLY FOR MEDITATION) -->
+    <div class="voice-modal" id="voiceModal">
+      <button class="close-btn" id="closeVoice">✕</button>
+
+      <div class="voice-content">
+        <div class="avatar">
+          <div class="avatar-inner">🌙</div>
+        </div>
+
+        <h2 class="voice-title">Serene Speaking</h2>
+        <p class="voice-subtitle">Preparing voice...</p>
+
+        <div class="visualizer">
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+          <div class="visualizer-bar"></div>
+        </div>
+
+        <button class="end-session-btn" id="endSession">Stop Speaking</button>
+      </div>
+    </div>
+
+    <!-- SCRIPTS -->
     <script src="script/navbar.js"></script>
-    <script src="script/chat.js?v=704"></script>
+    <script src="script/api.js"></script>
+    <!--<script src="script/common.js"></script>-->
+    <!--<script src="script/authGuard.js"></script>-->
+
+    <!-- MUST BE BEFORE chat.js -->
+    <!--<script src="script/meditation.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/emoji-button@latest/dist/index.min.js"></script>
+    <script src="script/chat.js"></script>
   </body>
 </html>

@@ -1,36 +1,28 @@
-import os
-import shutil
-import uuid
-
-from fastapi import FastAPI, Depends, UploadFile, File
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
 
-from emotion_classifier import EmotionClassifier
-from langgraph_main import app as langgraph_app
-from langchain_core.messages import HumanMessage
+# from emotion_classifier import EmotionClassifier
+# from rag import retrieve_context
 
 from database import Base, engine, SessionLocal
-from models import ChatHistory
-from auth import router as auth_router
+from models import ChatSession, ChatMessage
+from fastapi import Depends
+from sqlalchemy.orm import Session
 
+from langgraph_main import app as langgraph_app, config
+from langchain_core.messages import HumanMessage
 
-# ================= DB INIT =================
 Base.metadata.create_all(bind=engine)
 
-# ================= APP =================
+# 🚀 Create FastAPI app
 app = FastAPI()
+
+from auth import router as auth_router
+
 app.include_router(auth_router)
 
-UPLOAD_DIR = "uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
-
-
-# ================= CORS =================
+# 🌍 Allow frontend to connect
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -39,23 +31,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# # 🧠 Load ML model once
+# classifier = EmotionClassifier()
 
-# ================= MODEL =================
-classifier = EmotionClassifier()
-
-
-# ================= REQUEST MODELS =================
+# 📩 Request format from frontend
 class ChatRequest(BaseModel):
     message: str
-    user_id: int
-    chat_id: str | None = None
+    chat_id: int | None = None
 
 
-class RenameChatRequest(BaseModel):
-    title: str
-
-
-# ================= DB SESSION =================
 def get_db():
     db = SessionLocal()
     try:
@@ -63,103 +47,111 @@ def get_db():
     finally:
         db.close()
 
-
-# ================= CHAT =================
+# 💬 API endpoint
 @app.post("/chat")
 def chat(req: ChatRequest, db: Session = Depends(get_db)):
-    text = req.message.strip()
-    user_id = req.user_id
+    text = req.message
+    chat_id = req.chat_id
 
-    if not text:
-        return {
-            "reply": "Please type a message.",
-            "chat_id": req.chat_id
-        }
+    result = langgraph_app.invoke(
+    {
+        "messages": [HumanMessage(content=text)]
+    },
+    config=config
+)
 
-    chat_id = req.chat_id or str(uuid.uuid4())
+    reply = result["messages"][-1].content
 
-    try:
-        result = langgraph_app.invoke(
-            {
-                "messages": [HumanMessage(content=text)],
-            },
-            config={
-                "configurable": {
-                    "thread_id": chat_id
-                }
-            }
+    # create new chat session
+    if chat_id is None:
+        session = ChatSession(
+            user_id=1,
+            title=text[:30]
         )
+        db.add(session)
+        db.commit()
+        db.refresh(session)
 
-        print("RESULT MESSAGES:", result.get("messages"))
-        print("LAST MESSAGE TYPE:", type(result.get("messages", [])[-1]))
+        chat_id = session.id
 
-        reply = (
-            result.get("messages", [])[-1].content
-            if result.get("messages")
-            else "Sorry, something went wrong."
-        )
-
-    except Exception as e:
-        print("LangGraph error:", e)
-        reply = (
-            "I'm receiving too many requests right now. "
-            "Please wait a moment and try again."
-        )
-
-    chat_entry = ChatHistory(
-        user_id=user_id,
-        chat_id=chat_id,
-        message=text,
-        response=reply
+    # save user message
+    user_message = ChatMessage(
+        session_id=chat_id,
+        sender="user",
+        content=text
     )
 
-    db.add(chat_entry)
+    # save bot reply
+    bot_message = ChatMessage(
+        session_id=chat_id,
+        sender="bot",
+        content=reply
+    )
+
+    db.add(user_message)
+    db.add(bot_message)
     db.commit()
 
     return {
-        "reply": reply,
-        "chat_id": chat_id
+        "chat_id": chat_id,
+        "emotion": emotion,
+        "reply": reply
     }
 
-
-# ================= GET ALL CHATS =================
-@app.get("/chats/{user_id}")
-def get_chats(user_id: int, db: Session = Depends(get_db)):
-    chats = (
-        db.query(ChatHistory)
-        .filter(ChatHistory.user_id == user_id)
-        .order_by(ChatHistory.id.desc())
+@app.get("/history/{user_id}")
+def get_history(user_id: int, db: Session = Depends(get_db)):
+    sessions = (
+        db.query(ChatSession)
+        .filter(ChatSession.user_id == user_id)
         .all()
     )
 
-    grouped = {}
+    result = []
 
-    for chat in chats:
-        cid = chat.chat_id
+    for s in sessions:
+        messages = (
+            db.query(ChatMessage)
+            .filter(ChatMessage.session_id == s.id)
+            .all()
+        )
 
-        if cid not in grouped:
-            grouped[cid] = {
-                "chat_id": cid,
-                "title": chat.title or ((chat.message[:25] + "...") if chat.message else "New Chat"),
-                "last_message": chat.message,
-                "messages": []
-            }
-
-        grouped[cid]["messages"].append({
-            "message": chat.message,
-            "response": chat.response
+        result.append({
+            "date": "Today",
+            "exercise": s.title,
+            "duration": len(messages)
         })
 
-    return list(grouped.values())
+    return {
+        "totalSessions": len(result),
+        "totalMinutes": sum(r["duration"] for r in result),
+        "streak": len(result),
+        "sessions": result
+    }
 
 
-# ================= GET SINGLE CHAT =================
-@app.get("/chat/{chat_id}")
-def get_chat(chat_id: str, db: Session = Depends(get_db)):
+@app.get("/api/get_chats")
+def get_chats(db: Session = Depends(get_db)):
     chats = (
-        db.query(ChatHistory)
-        .filter(ChatHistory.chat_id == chat_id)
-        .order_by(ChatHistory.id.asc())
+        db.query(ChatSession)
+        .filter(ChatSession.user_id == 1)
+        .order_by(ChatSession.created_at.desc())
+        .all()
+    )
+
+    return [
+        {
+            "id": c.id,
+            "title": c.title
+        }
+        for c in chats
+    ]
+
+@app.get("/api/get_messages/{chat_id}")
+def get_messages(chat_id: int, db: Session = Depends(get_db)):
+    messages = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.session_id == chat_id)
+        .order_by(ChatMessage.created_at.asc())
         .all()
     )
 
@@ -167,107 +159,60 @@ def get_chat(chat_id: str, db: Session = Depends(get_db)):
         "chat_id": chat_id,
         "messages": [
             {
-                "message": c.message,
-                "response": c.response
+                "sender": m.sender,
+                "text": m.content
             }
-            for c in chats
+            for m in messages
         ]
     }
 
+class DeleteChatRequest(BaseModel):
+    chat_id: int
 
-# ================= RENAME CHAT =================
-@app.put("/chat/{chat_id}/rename")
-def rename_chat(
-    chat_id: str,
-    req: RenameChatRequest,
-    db: Session = Depends(get_db)
-):
-    new_title = req.title.strip()
 
-    if not new_title:
-        return {"message": "Title cannot be empty"}
+@app.post("/api/delete_chat")
+def delete_chat(req: DeleteChatRequest, db: Session = Depends(get_db)):
+    chat = db.query(ChatSession).filter(
+        ChatSession.id == req.chat_id
+    ).first()
 
-    first_chat = (
-        db.query(ChatHistory)
-        .filter(ChatHistory.chat_id == chat_id)
-        .order_by(ChatHistory.id.asc())
-        .first()
-    )
+    if not chat:
+        return {"success": False}
 
-    if not first_chat:
-        return {"message": "Chat not found"}
+    db.query(ChatMessage).filter(
+    ChatMessage.session_id == req.chat_id
+).delete()
 
-    first_chat.title = new_title
+    db.delete(chat)
     db.commit()
 
-    return {
-        "message": "Chat renamed successfully",
-        "chat_id": chat_id,
-        "title": new_title
-    }
+    return {"success": True}
 
 
-# ================= DELETE CHAT =================
-@app.delete("/chat/{chat_id}")
-def delete_chat(chat_id: str, db: Session = Depends(get_db)):
-    db.query(ChatHistory).filter(
-        ChatHistory.chat_id == chat_id
-    ).delete()
+class RenameChatRequest(BaseModel):
+    chat_id: int
+    title: str
 
+
+
+@app.post("/api/rename_chat")
+def rename_chat(req: RenameChatRequest, db: Session = Depends(get_db)):
+    chat = db.query(ChatSession).filter(
+        ChatSession.id == req.chat_id
+    ).first()
+
+    if not chat:
+        return {"success": False}
+
+    chat.title = req.title
     db.commit()
 
-    return {
-        "message": "Chat deleted successfully"
-    }
+    return {"success": True}
 
 
-# ================= HISTORY =================
-@app.get("/history/{user_id}")
-def get_history(user_id: int, db: Session = Depends(get_db)):
-    chats = (
-        db.query(ChatHistory)
-        .filter(ChatHistory.user_id == user_id)
-        .all()
-    )
-
-    sessions = []
-
-    for chat in chats:
-        sessions.append({
-            "date": "Today",
-            "exercise": chat.message[:30],
-            "duration": max(1, len(chat.response or "") // 50)
-        })
-
-    return {
-        "totalSessions": len(sessions),
-        "totalMinutes": sum(s["duration"] for s in sessions),
-        "streak": len(sessions),
-        "sessions": sessions
-    }
 
 
-# ================= FILE UPLOAD =================
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    ext = file.filename.split(".")[-1]
-    unique_name = f"{uuid.uuid4()}.{ext}"
-
-    filepath = os.path.join(UPLOAD_DIR, unique_name)
-
-    with open(filepath, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    return {
-        "filename": unique_name,
-        "original_name": file.filename,
-        "url": f"http://127.0.0.1:8000/uploads/{unique_name}"
-    }
-
-
-# ================= HEALTH =================
+# 🟢 Test route
 @app.get("/")
 def home():
-    return {
-        "status": "Backend is running 🚀"
-    }
+    return {"status": "Backend is running 🚀"}

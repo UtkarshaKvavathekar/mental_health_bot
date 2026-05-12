@@ -1,274 +1,476 @@
-console.log("NEW CHAT.JS LOADED");
+console.log("chat.js loaded");
 
-const API = "http://127.0.0.1:8000";
-
-let activeChatId = null;
+let chatInitialized = false;
+let messageInput, sendBtn, chatMessages;
 let isSending = false;
 
-let chatMessages;
-let chatHistory;
-let messageInput;
-let chatSidebar;
+let chats = [];
+let activeChatId = null;
 
-/* ================= INIT ================= */
 
-document.addEventListener("DOMContentLoaded", async () => {
-  chatMessages = document.getElementById("chatMessages");
-  chatHistory = document.getElementById("chatHistory");
+const API_BASE = "http://127.0.0.1:8000";
+
+async function apiRequest(path, method = "GET", body = null) {
+  const options = {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  if (body !== null) {
+    options.body = JSON.stringify(body);
+  }
+
+  const response = await fetch(`${API_BASE}${path}`, options);
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`API ${response.status}: ${text}`);
+  }
+
+  return await response.json();
+}
+
+// ================= PAGE DEBUG =================
+window.addEventListener("pageshow", () => {
+  console.log("Page restored - not resetting chat");
+});
+
+window.addEventListener("beforeunload", () => {
+  console.log("⚠ Page is reloading");
+});
+
+// ================= INIT =================
+window.addEventListener("DOMContentLoaded", async () => {
   messageInput = document.getElementById("messageInput");
-  chatSidebar = document.getElementById("chatSidebar");
+  sendBtn = document.getElementById("sendBtn");
+  chatMessages = document.getElementById("chatMessages");
+  initializeSidebar();
 
-  document.getElementById("sendBtn").addEventListener("click", (e) => {
+  await restoreChatState();
+
+  console.log("SendBtn:", sendBtn);
+
+  if (!sendBtn || !messageInput || !chatMessages) {
+    console.error("Chat elements missing");
+    return;
+  }
+
+  // SAFE CLICK HANDLER
+  setupEmojiPicker();
+  sendBtn.onclick = function (e) {
     e.preventDefault();
+    e.stopPropagation();
+    console.log("Send button clicked");
     sendMessage();
-  });
+  };
 
-  document.getElementById("newChatBtn").addEventListener("click", (e) => {
-    e.preventDefault();
-    newChat();
-  });
-
+  // SAFE ENTER HANDLER
   messageInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter") {
       e.preventDefault();
+      e.stopPropagation();
+      console.log("Enter pressed");
       sendMessage();
     }
   });
 
-  document.getElementById("menuBtn").addEventListener("click", (e) => {
-    e.preventDefault();
-    chatSidebar.classList.toggle("open");
-  });
-
-  renderWelcome();
-  await loadChats();
+  handleMeditation();
 });
 
-/* ================= NEW CHAT ================= */
-
-function newChat() {
-  activeChatId = null;
-  chatMessages.innerHTML = "";
-  renderWelcome();
-  highlightActive();
-  messageInput.focus();
-}
-
-/* ================= WELCOME ================= */
-
-function renderWelcome() {
-  appendMessage("bot", "Hello 🌿 I'm Serene. Tell me how you're feeling today.");
-}
-
-/* ================= SEND ================= */
-
+// ================= CHAT SEND =================
 async function sendMessage() {
-  if (isSending) return;
+  console.log("sendMessage started");
+
+  if (isSending) {
+    console.log("Already sending");
+    return;
+  }
 
   const message = messageInput.value.trim();
-  if (!message) return;
+  console.log("Message value:", message);
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const user_id = user?.id;
-
-  if (!user_id) {
-    appendMessage("bot", "⚠ Please login again");
+  if (!message) {
+    console.log("Message empty");
     return;
   }
 
   isSending = true;
 
   appendMessage("user", message);
+
+  const active = chats.find((c) => c.id === activeChatId);
+  if (active && active.title === "New Chat") {
+    active.title = message.slice(0, 24);
+    renderSidebar();
+  }
+
   messageInput.value = "";
 
-  showTyping();
-
   try {
-    const res = await fetch(`${API}/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message,
-        user_id: Number(user_id),
-        chat_id: activeChatId,
-      }),
+    showTyping();
+
+    console.log("Calling /chat API...");
+
+    const data = await apiRequest("/chat", "POST", {
+      message: message,
+      chat_id: activeChatId,
     });
 
-    if (!res.ok) {
-      throw new Error("Backend request failed");
+    if (!activeChatId && data.chat_id) {
+      activeChatId = data.chat_id;
+      chats = chats.filter((c) => c.id !== null);
+      await restoreChatState();
     }
 
-    const data = await res.json();
+    console.log("API response:", data);
 
     removeTyping();
 
-    appendMessage("bot", data.reply);
+    if (data && data.reply) {
+      appendMessage("bot", data.reply);
 
-    const wasNewChat = !activeChatId;
-
-    if (wasNewChat) {
-      activeChatId = String(data.chat_id);
+      if (data.emotion?.label) {
+        appendMessage("bot", `<small>Emotion: ${data.emotion.label}</small>`);
+      }
+    } else {
+      appendMessage("bot", "⚠ Invalid response from server");
     }
-
-    await loadChats();
-    highlightActive();
-  } catch (error) {
+  } catch (err) {
     removeTyping();
-    appendMessage("bot", "Backend error.");
-    console.error(error);
-  }
-
-  isSending = false;
-}
-
-/* ================= LOAD SIDEBAR ================= */
-
-async function loadChats() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const user_id = user?.id || 1;
-
-  try {
-    const res = await fetch(`${API}/chats/${user_id}`);
-    const chats = await res.json();
-
-    chatHistory.innerHTML = "";
-
-    chats.forEach((chat) => {
-      const item = document.createElement("div");
-      item.className = "chat-item";
-      item.dataset.id = String(chat.chat_id);
-
-      item.innerHTML = `
-        <div class="chat-title">${chat.title}</div>
-        <div class="chat-actions">
-          <span class="chat-action rename">✏️</span>
-          <span class="chat-action delete">🗑</span>
-        </div>
-      `;
-
-      item.addEventListener("click", async () => {
-        await openChat(chat.chat_id);
-      });
-
-      const renameBtn = item.querySelector(".rename");
-      const deleteBtn = item.querySelector(".delete");
-
-      renameBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const title = prompt("Rename chat", chat.title);
-        if (!title || !title.trim()) return;
-
-        await fetch(`${API}/chat/${chat.chat_id}/rename`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: title.trim(),
-          }),
-        });
-
-        await loadChats();
-      });
-
-      deleteBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const confirmDelete = confirm("Delete this chat?");
-        if (!confirmDelete) return;
-
-        await fetch(`${API}/chat/${chat.chat_id}`, {
-          method: "DELETE",
-        });
-
-        if (activeChatId === String(chat.chat_id)) {
-          newChat();
-        }
-
-        await loadChats();
-      });
-
-      chatHistory.appendChild(item);
-    });
-
-    highlightActive();
-  } catch (error) {
-    console.error("Failed to load chats", error);
+    console.error("Chat Error:", err);
+    appendMessage("bot", "⚠ Backend error");
+  } finally {
+    isSending = false;
   }
 }
 
-/* ================= OPEN CHAT ================= */
+// ================= APPEND MESSAGE =================
+function appendMessage(sender, text) {
+  if (!chatMessages) return;
 
-async function openChat(chatId) {
-  try {
-    const res = await fetch(`${API}/chat/${chatId}`);
-    const data = await res.json();
+  const msg = document.createElement("div");
+  msg.className = `message ${sender}`;
 
-    activeChatId = String(chatId);
+  const content = document.createElement("div");
+  content.className = "message-content";
+  content.textContent = text;
 
-    chatMessages.innerHTML = "";
+  msg.appendChild(content);
+  chatMessages.appendChild(msg);
 
-    data.messages.forEach((m) => {
-      appendMessage("user", m.message);
-      appendMessage("bot", m.response);
-    });
+  // 🔥 FIX: delay scroll + save together
+  requestAnimationFrame(() => {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    highlightActive();
-    chatSidebar.classList.remove("open");
-  } catch (error) {
-    console.error("Failed to open chat", error);
-  }
-}
-
-/* ================= HIGHLIGHT ================= */
-
-function highlightActive() {
-  document.querySelectorAll(".chat-item").forEach((item) => {
-    item.classList.toggle(
-      "active",
-      String(item.dataset.id) === String(activeChatId)
-    );
+    setTimeout(() => {
+      saveChatState(); // 🔥 delayed save prevents jump
+    }, 0);
   });
 }
 
-/* ================= MESSAGE ================= */
+function saveChatState() {
+  const active = chats.find((c) => c.id === activeChatId);
+  if (!active) return;
 
-function appendMessage(type, text) {
-  const row = document.createElement("div");
-  row.className = `message-row ${type}`;
+  active.messages = chatMessages.innerHTML;
 
-  const bubble = document.createElement("div");
-  bubble.className = "message-bubble";
-  bubble.textContent = text;
-
-  row.appendChild(bubble);
-  chatMessages.appendChild(row);
-
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+  localStorage.setItem("serene_chats", JSON.stringify(chats));
+  localStorage.setItem("serene_active_chat", activeChatId);
 }
 
-/* ================= TYPING ================= */
+async function restoreChatState() {
+  try {
+    const data = await apiRequest("/api/get_chats", "GET");
 
+    chats = data || [];
+
+    if (!chats.length) {
+      chats = [
+        {
+          id: null,
+          title: "New Chat",
+        },
+      ];
+
+      activeChatId = null;
+    } else {
+      activeChatId = chats[0].id;
+    }
+
+    renderSidebar();
+
+    if (activeChatId) {
+      await loadChat(activeChatId);
+    } else {
+      chatMessages.innerHTML = `
+        <div class="message bot">
+          <div class="message-content">
+            Hello 🌿 I'm Serene. Tell me how you're feeling today.
+          </div>
+        </div>
+      `;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// ================= TYPING =================
 function showTyping() {
   removeTyping();
 
-  const row = document.createElement("div");
-  row.id = "typing";
-  row.className = "message-row bot";
+  const div = document.createElement("div");
+  div.id = "typing";
+  div.className = "message bot";
+  div.innerHTML = `<div class="message-content">Typing...</div>`;
 
-  row.innerHTML = `
-    <div class="message-bubble">Typing...</div>
-  `;
+  chatMessages.appendChild(div);
 
-  chatMessages.appendChild(row);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+  requestAnimationFrame(() => {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
 }
 
 function removeTyping() {
-  document.getElementById("typing")?.remove();
+  const t = document.getElementById("typing");
+  if (t) t.remove();
+}
+
+// ================= MEDITATION =================
+function handleMeditation() {
+  if (chatInitialized) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const exercise = params.get("exercise");
+
+  if (!exercise) return;
+
+  chatInitialized = true;
+
+  window.history.replaceState({}, document.title, "chat.html");
+
+  const text = `Let's begin ${exercise} exercise together. Relax and follow me.`;
+
+  setTimeout(() => {
+    appendMessage("user", `I'd like to try ${exercise}`);
+    appendMessage("bot", text);
+    startMeditationVoice(text);
+  }, 100);
+}
+
+// ================= VOICE =================
+const voiceModal = document.getElementById("voiceModal");
+const closeVoice = document.getElementById("closeVoice");
+const endSession = document.getElementById("endSession");
+
+function startMeditationVoice(text) {
+  if (!voiceModal) return;
+
+  voiceModal.classList.add("active");
+
+  const subtitle = voiceModal.querySelector(".voice-subtitle");
+  if (subtitle) subtitle.textContent = "Speaking...";
+
+  speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.95;
+
+  utterance.onend = () => {
+    voiceModal.classList.remove("active");
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+function stopVoice() {
+  speechSynthesis.cancel();
+
+  if (voiceModal) {
+    voiceModal.classList.remove("active");
+  }
+}
+
+closeVoice?.addEventListener("click", stopVoice);
+endSession?.addEventListener("click", stopVoice);
+
+// unlock audio once user interacts
+window.addEventListener("click", () => {
+  speechSynthesis.resume();
+});
+
+function setupEmojiPicker() {
+  const button = document.getElementById("emojiBtn");
+
+  const picker = new EmojiButton({
+    position: "top-start", // 👈 THIS FIXES YOUR ISSUE
+  });
+
+  let isOpen = false;
+
+  picker.on("emoji", (emoji) => {
+    messageInput.value += emoji;
+    messageInput.focus();
+
+    picker.hidePicker(); // 👈 closes picker after selection
+    isOpen = false;
+  });
+
+  button.addEventListener("click", () => {
+    if (isOpen) {
+      picker.hidePicker();
+      isOpen = false;
+    } else {
+      picker.showPicker(button);
+      isOpen = true;
+    }
+  });
+}
+
+function scrollToBottom() {
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function initializeSidebar() {
+  document
+    .getElementById("newChatBtn")
+    ?.addEventListener("click", createNewChat);
+
+  document
+    .getElementById("mobileSidebarToggle")
+    ?.addEventListener("click", openSidebar);
+
+  document
+    .getElementById("sidebarClose")
+    ?.addEventListener("click", closeSidebar);
+
+  document
+    .getElementById("sidebarOverlay")
+    ?.addEventListener("click", closeSidebar);
+}
+
+function renderSidebar() {
+  const container = document.getElementById("chatHistory");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  chats.forEach((chat) => {
+    const item = document.createElement("div");
+
+    const isActive =
+      (activeChatId === null && chat.id === null) || chat.id === activeChatId;
+
+    item.className = `chat-item ${isActive ? "active" : ""}`;
+
+    item.innerHTML = `
+      <div class="chat-title">${chat.title}</div>
+      <div class="chat-actions">
+        <button class="chat-action-btn rename-btn">✎</button>
+        <button class="chat-action-btn delete-btn">🗑</button>
+      </div>
+    `;
+
+    item.addEventListener("click", () => loadChat(chat.id));
+
+    item.querySelector(".rename-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      renameChat(chat.id);
+    });
+
+    item.querySelector(".delete-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteChat(chat.id);
+    });
+
+    container.appendChild(item);
+  });
+}
+
+function createNewChat() {
+  const existingDraft = chats.find((chat) => chat.id === null);
+
+  if (existingDraft) {
+    activeChatId = null;
+  } else {
+    chats.unshift({
+      id: null,
+      title: "New Chat",
+    });
+
+    activeChatId = null;
+  }
+
+  chatMessages.innerHTML = `
+    <div class="message bot">
+      <div class="message-content">
+        Hello 🌿 I'm Serene. Tell me how you're feeling today.
+      </div>
+    </div>
+  `;
+
+  renderSidebar();
+  closeSidebar();
+}
+
+async function renameChat(id) {
+  const title = prompt("Rename chat");
+  if (!title) return;
+
+  await apiRequest("/api/rename_chat", "POST", {
+    chat_id: id,
+    title,
+  });
+
+  await restoreChatState();
+}
+
+async function deleteChat(id) {
+  await apiRequest("/api/delete_chat", "POST", {
+    chat_id: id,
+  });
+
+  await restoreChatState();
+}
+
+async function loadChat(id) {
+  if (!id) return;
+
+  activeChatId = id;
+
+  const data = await apiRequest(`/api/get_messages/${id}`, "GET");
+
+  chatMessages.innerHTML = "";
+
+  data.messages.forEach((msg) => {
+    const div = document.createElement("div");
+    div.className = `message ${msg.sender}`;
+
+    div.innerHTML = `
+      <div class="message-content">${msg.text}</div>
+    `;
+
+    chatMessages.appendChild(div);
+  });
+
+  renderSidebar();
+  scrollToBottom();
+  closeSidebar();
+}
+
+function saveAllChats() {
+  localStorage.setItem("serene_chats", JSON.stringify(chats));
+  localStorage.setItem("serene_active_chat", activeChatId);
+}
+
+function openSidebar() {
+  document.getElementById("chatSidebar")?.classList.add("open");
+  document.getElementById("sidebarOverlay")?.classList.add("active");
+}
+
+function closeSidebar() {
+  document.getElementById("chatSidebar")?.classList.remove("open");
+  document.getElementById("sidebarOverlay")?.classList.remove("active");
 }

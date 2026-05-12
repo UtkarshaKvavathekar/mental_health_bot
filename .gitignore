@@ -2,5 +2,12 @@ venv/
 __pycache__/
 *.pyc
 .env
+
 vector_db/
-models/
+
+backend/models/
+
+*.db
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
