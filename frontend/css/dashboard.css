@@ -149,18 +149,21 @@
   flex:1;
 }
 
-.bar-item{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+.bar {
+  width: 40px;
+  background: #26a69a;
+  border-radius: 10px 10px 0 0;
+  transition: height 0.5s ease;
+  min-height: 10px;
+  animation: growBar 1s ease;
 }
 
-.bar{
-  width:100%;
-  background:#26a69a;
-  border-radius:8px;
-  transition:0.3s ease;
+.bar-item{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  align-items:center;
+  height:100%;
 }
 
 .bar-label{
@@ -235,4 +238,15 @@
   .quick-relief-grid{
     grid-template-columns:1fr;
   }
+}
+
+@keyframes growBar{
+  from{
+    height:0;
+  }
+}
+
+.mood-btn.active{
+  background:#26a69a;
+  transform:scale(1.1);
 }

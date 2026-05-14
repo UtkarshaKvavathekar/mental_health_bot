@@ -15,8 +15,8 @@ async function loadDashboard() {
   } catch (err) {
     console.log(err);
 
-  document.getElementById("dashboardLoading").innerHTML =
-    "Failed to load dashboard.";
+    document.getElementById("dashboardLoading").innerHTML =
+      "Failed to load dashboard.";
 
     // fallback UI
     updateUI({
@@ -29,8 +29,7 @@ async function loadDashboard() {
       focusTip: "Take small breaks",
       insight: "You are doing great!",
     });
-  }
-  finally {
+  } finally {
     loadingEl.style.display = "none";
   }
 }
@@ -69,8 +68,7 @@ function updateUI(data) {
 
   // 💡 Insight
   document.getElementById("insight").innerHTML =
-    "💡 <strong>Pro Tip:</strong> " +
-    (data.insight || "Take care of yourself");
+    "💡 <strong>Pro Tip:</strong> " + (data.insight || "Take care of yourself");
 }
 
 // 📊 Mood Chart
@@ -96,12 +94,18 @@ function renderChart(moodData) {
     barItem.appendChild(label);
     container.appendChild(barItem);
   });
+  console.log(moodData);
 }
 
 // 😊 Save Mood (with small UX improvement)
 document.querySelectorAll(".mood-btn").forEach((btn) => {
   btn.addEventListener("click", async () => {
     const mood = btn.innerText;
+    document
+      .querySelectorAll(".mood-btn")
+      .forEach((b) => b.classList.remove("active"));
+
+    btn.classList.add("active");
 
     // UX improvement: prevent spam clicks
     btn.disabled = true;

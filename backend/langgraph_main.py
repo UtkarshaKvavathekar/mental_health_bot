@@ -4,8 +4,12 @@ from langgraph.graph import StateGraph,START,END,MessagesState
 from langgraph.checkpoint.sqlite import SqliteSaver
 import sqlite3
 
-sqlite_conn=sqlite3.connect("checkpoint.sqlite",check_same_thread=False)
-memory=SqliteSaver(sqlite_conn)
+sqlite_conn = sqlite3.connect(
+    "checkpoint.sqlite",
+    check_same_thread=False
+)
+
+memory = SqliteSaver(sqlite_conn)
 
 #My moduls
 from emotion_node import emotion_node
@@ -63,9 +67,9 @@ def router_node(state:ChatState):
         return{"route":"emergency"}
     
     #RAG
-    if emotion in ["sad","anxious","stressed","depressed","angry"]:
-        if len(user_msg.split()) > 4:
-            return {"route": "rag"}
+    # RAG disabled temporarily for speed
+    if False:
+        return {"route":"rag"}
     
     #Normal convo
     return{"route":"llm"}
@@ -113,10 +117,12 @@ from dotenv import load_dotenv
 import os
 load_dotenv("../../.env")
 
+github_token = os.getenv("GITHUB_TOKEN")
+
 llm = ChatOpenAI(
-    model="openai/gpt-4.1",
-    api_key=os.getenv("GITHUB_TOKEN"),
-    base_url="https://models.github.ai/inference"
+    model="gpt-4o-mini",
+    api_key=str(github_token),
+    base_url="https://models.inference.ai.azure.com"
 )
 # response = llm.invoke("hi")
 # print(response.content)
@@ -248,8 +254,7 @@ workflow.add_node("agent",call_model)
 workflow.add_node("emergency",emergency_node)
 
 #3.Define flow
-workflow.add_edge(START,"emotion")
-workflow.add_edge("emotion","router")
+workflow.add_edge(START,"router")
 
 #4.Addind conditional routing
 workflow.add_conditional_edges(
@@ -270,7 +275,8 @@ workflow.add_edge("rag","agent")
 workflow.add_edge("agent",END)
 
 #7.Compile the app
-app=workflow.compile(checkpointer=memory)
+app = workflow.compile()
+
 config={"configurable":{
     "thread_id":1
 }}

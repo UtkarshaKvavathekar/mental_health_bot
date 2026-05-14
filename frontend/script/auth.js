@@ -61,9 +61,15 @@ async function handleAuth() {
           email: data.email,
         })
       );
+      // 🚀 CLEAR OLD USER CHAT STATE
+localStorage.removeItem("activeChatId");
+
+window.location.href = "dashboard.html";
 
       window.location.href = "dashboard.html";
     }
+
+    
 
     // ---------------- SIGNUP ----------------
     else {

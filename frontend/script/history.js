@@ -52,7 +52,7 @@ function updateUI(data) {
   // No sessions
   if (!data.sessions || data.sessions.length === 0) {
     container.innerHTML =
-      "<div class='empty'>No sessions yet 🧘</div>";
+      "<div class='empty'>🌿 Your mindfulness journey begins here. Complete a meditation session to see your progress.</div>"
     return;
   }
 

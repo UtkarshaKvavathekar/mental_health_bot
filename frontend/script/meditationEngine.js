@@ -1,6 +1,7 @@
 window.MeditationEngine = (function () {
   let isRunning = false;
   let isPaused = false;
+  let sessionStartTime = null;
 
   function startStars() {
     const canvas = document.getElementById("starsCanvas");
@@ -346,7 +347,9 @@ window.MeditationEngine = (function () {
   }
 
   async function startExercise(type) {
+    sessionStartTime = Date.now();
     toggleUI(type);
+    
     switch (type) {
       case "breathing":
         await breathing();
@@ -371,6 +374,43 @@ window.MeditationEngine = (function () {
 
     showMessage("Session completed 🌿");
     speak("Session completed");
+    const auth = checkAuth();
+
+const userId = auth.userId;
+
+const sessionEndTime = Date.now();
+
+const durationSeconds =
+  Math.floor(
+    (sessionEndTime - sessionStartTime) / 1000
+  );
+
+const durationMinutes =
+  Math.max(
+    1,
+    Math.round(durationSeconds / 60)
+  );
+
+await fetch(
+  "http://127.0.0.1:8000/meditation/save",
+  {
+
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+
+      user_id: userId,
+
+      exercise: type,
+
+      duration: durationMinutes
+    })
+  }
+);
   }
 
   return {

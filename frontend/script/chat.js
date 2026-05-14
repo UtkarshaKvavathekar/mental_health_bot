@@ -7,8 +7,14 @@ let isSending = false;
 let chats = [];
 let activeChatId = null;
 
-
 const API_BASE = "http://127.0.0.1:8000";
+const auth = checkAuth();
+const userId = auth.userId;
+const CHAT_STORAGE_KEY =
+  `serene_chats_${userId}`;
+
+const ACTIVE_CHAT_KEY =
+  `serene_active_chat_${userId}`;
 
 async function apiRequest(path, method = "GET", body = null) {
   const options = {
@@ -37,20 +43,19 @@ window.addEventListener("pageshow", () => {
   console.log("Page restored - not resetting chat");
 });
 
-window.addEventListener("beforeunload", () => {
-  console.log("⚠ Page is reloading");
-});
-
 // ================= INIT =================
 window.addEventListener("DOMContentLoaded", async () => {
   messageInput = document.getElementById("messageInput");
   sendBtn = document.getElementById("sendBtn");
+
   chatMessages = document.getElementById("chatMessages");
   initializeSidebar();
 
   await restoreChatState();
 
   console.log("SendBtn:", sendBtn);
+  console.log("messageInput:", messageInput);
+  console.log("chatMessages:", chatMessages);
 
   if (!sendBtn || !messageInput || !chatMessages) {
     console.error("Chat elements missing");
@@ -59,12 +64,14 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   // SAFE CLICK HANDLER
   setupEmojiPicker();
-  sendBtn.onclick = function (e) {
+  sendBtn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     console.log("Send button clicked");
+
     sendMessage();
-  };
+  });
 
   // SAFE ENTER HANDLER
   messageInput.addEventListener("keydown", (e) => {
@@ -115,14 +122,54 @@ async function sendMessage() {
 
     const data = await apiRequest("/chat", "POST", {
       message: message,
-      chat_id: activeChatId,
+      chat_id:
+
+  activeChatId &&
+  chats.some(c => c.id === activeChatId)
+
+    ? activeChatId
+
+    : null,
+      user_id: userId,
     });
 
-    if (!activeChatId && data.chat_id) {
-      activeChatId = data.chat_id;
-      chats = chats.filter((c) => c.id !== null);
-      await restoreChatState();
-    }
+    if (data.chat_id) {
+
+  // 🚀 update active chat
+
+  activeChatId = data.chat_id;
+
+  // remove temporary draft chats
+
+  chats = chats.filter(
+    (c) => c.id !== null
+  );
+
+  // check if chat already exists
+
+  const existing = chats.find(
+    (c) => c.id === data.chat_id
+  );
+
+  // create only if missing
+
+  if (!existing) {
+
+    chats.unshift({
+
+      id: data.chat_id,
+
+      title: message.slice(0, 24),
+    });
+  }
+
+  // 🚀 VERY IMPORTANT
+  // preserve current active chat
+
+  renderSidebar();
+
+  saveChatState();
+}
 
     console.log("API response:", data);
 
@@ -130,17 +177,13 @@ async function sendMessage() {
 
     if (data && data.reply) {
       appendMessage("bot", data.reply);
-
-      if (data.emotion?.label) {
-        appendMessage("bot", `<small>Emotion: ${data.emotion.label}</small>`);
-      }
     } else {
       appendMessage("bot", "⚠ Invalid response from server");
     }
   } catch (err) {
     removeTyping();
     console.error("Chat Error:", err);
-    appendMessage("bot", "⚠ Backend error");
+    appendMessage("bot", `⚠ Error: ${err.message}`);
   } finally {
     isSending = false;
   }
@@ -165,7 +208,10 @@ function appendMessage(sender, text) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     setTimeout(() => {
-      saveChatState(); // 🔥 delayed save prevents jump
+      // only save if chat already exists
+      if (activeChatId !== null) {
+        saveChatState();
+      }
     }, 0);
   });
 }
@@ -176,28 +222,61 @@ function saveChatState() {
 
   active.messages = chatMessages.innerHTML;
 
-  localStorage.setItem("serene_chats", JSON.stringify(chats));
-  localStorage.setItem("serene_active_chat", activeChatId);
+  localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chats));
+  localStorage.setItem(ACTIVE_CHAT_KEY, activeChatId);
 }
 
 async function restoreChatState() {
+  const storedUserId = localStorage.getItem("chat_user_id");
+
+  if (storedUserId && storedUserId != userId) {
+    activeChatId = null;
+
+    localStorage.removeItem(CHAT_STORAGE_KEY);
+
+    localStorage.removeItem(ACTIVE_CHAT_KEY);
+  }
   try {
-    const data = await apiRequest("/api/get_chats", "GET");
+    const data = await apiRequest(`/api/get_chats/${userId}`, "GET");
 
     chats = data || [];
+    const savedActiveChat = localStorage.getItem(
+  ACTIVE_CHAT_KEY
+);
+
+if (savedActiveChat) {
+
+  activeChatId = Number(savedActiveChat);
+}
+    chats = chats.filter(chat => chat.id);
+    localStorage.setItem("chat_user_id", userId);
 
     if (!chats.length) {
-      chats = [
-        {
-          id: null,
-          title: "New Chat",
-        },
-      ];
 
-      activeChatId = null;
-    } else {
-      activeChatId = chats[0].id;
-    }
+  chats = [
+    {
+      id: null,
+      title: "New Chat",
+    },
+  ];
+
+  activeChatId = null;
+
+} else {
+
+  // 🚀 IMPORTANT:
+  // reset to newest valid user chat
+
+ const currentChatStillExists = chats.some(
+
+  chat => chat.id === activeChatId
+);
+
+if (!currentChatStillExists) {
+
+  activeChatId = chats[0]?.id || null;
+}
+}
 
     renderSidebar();
 
@@ -390,6 +469,7 @@ function renderSidebar() {
 }
 
 function createNewChat() {
+  activeChatId = null;
   const existingDraft = chats.find((chat) => chat.id === null);
 
   if (existingDraft) {
@@ -439,8 +519,12 @@ async function loadChat(id) {
   if (!id) return;
 
   activeChatId = id;
+  localStorage.setItem(
+  ACTIVE_CHAT_KEY,
+  id
+);
 
-  const data = await apiRequest(`/api/get_messages/${id}`, "GET");
+  const data = await apiRequest(`/api/get_messages/${id}/${userId}`, "GET");
 
   chatMessages.innerHTML = "";
 
@@ -461,8 +545,8 @@ async function loadChat(id) {
 }
 
 function saveAllChats() {
-  localStorage.setItem("serene_chats", JSON.stringify(chats));
-  localStorage.setItem("serene_active_chat", activeChatId);
+  localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chats));
+  localStorage.setItem(ACTIVE_CHAT_KEY, activeChatId);
 }
 
 function openSidebar() {

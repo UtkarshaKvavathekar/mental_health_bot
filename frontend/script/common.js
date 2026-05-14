@@ -9,6 +9,7 @@
 function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
+  localStorage.removeItem("activeChatId");
 
   window.location.href = "auth.html";
 }
