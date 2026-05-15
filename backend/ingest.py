@@ -7,10 +7,18 @@ from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 
 # 1.Load the pdf
-loader=PyPDFLoader("Data\\Think_CBT_Workbook_Static.pdf")
-docs=loader.load()
-print(f"Loaded {len(docs)} pages.")
+pdf_files = [
+    "Data\\Think_CBT_Workbook_Static.pdf",
+    "Data\\wellbeing-team-cbt-workshop-booklet-2016.pdf"
+]
 
+docs = []
+
+for pdf in pdf_files:
+    loader = PyPDFLoader(pdf)
+    docs.extend(loader.load())
+
+print(f"Loaded {len(docs)} pages.")
 # 2.Chunks
 text_splitter=RecursiveCharacterTextSplitter(
     chunk_size=800,
