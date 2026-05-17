@@ -27,7 +27,9 @@
     <p id="userId">Loading...</p>
   </div>
 
-  <button class="edit-btn">✏️ Edit Profile</button>
+  <button class="edit-btn" id="editProfileBtn">
+  ✏️ Edit Profile
+</button>
 </div>
 
 <!-- WELLNESS STATISTICS -->
@@ -96,46 +98,191 @@
   </div>
 </div>
 
-<!-- SETTINGS (Keep static for now) -->
-<div class="card">
-  <h3>Settings & Preferences</h3>
+<!-- SETTINGS -->
+<div class="card settings-card">
 
-  <div class="settings-toggle">🌙 Dark Mode <input type="checkbox" checked></div>
-  <div class="settings-toggle">🔔 Notifications <input type="checkbox" checked></div>
-  <div class="settings-toggle">📧 Email Reminders <input type="checkbox"></div>
-  <div class="settings-toggle">🔒 Privacy Mode <input type="checkbox"></div>
+  <div class="settings-header">
+    <h3>⚙️ Settings & Preferences</h3>
+    <p>Customize your Serene experience</p>
+  </div>
 
-  <div class="settings-toggle">
-    📱 Language
-    <select>
+  <!-- DARK MODE -->
+  <div class="settings-row">
+    
+    <div class="settings-left">
+      <div class="settings-icon">🌙</div>
+
+      <div>
+        <h4>Dark Mode</h4>
+        <p>Reduce eye strain during night usage</p>
+      </div>
+    </div>
+
+    <label class="switch">
+      <input type="checkbox" id="darkMode">
+      <span class="slider"></span>
+    </label>
+
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="settings-row">
+
+    <div class="settings-left">
+      <div class="settings-icon">🔔</div>
+
+      <div>
+        <h4>Notifications</h4>
+        <p>Receive important updates and reminders</p>
+      </div>
+    </div>
+
+    <label class="switch">
+      <input type="checkbox" id="notifications">
+      <span class="slider"></span>
+    </label>
+
+  </div>
+
+  <!-- EMAIL REMINDERS -->
+  <div class="settings-row">
+
+    <div class="settings-left">
+      <div class="settings-icon">📧</div>
+
+      <div>
+        <h4>Email Reminders</h4>
+        <p>Get wellness reminders in your inbox</p>
+      </div>
+    </div>
+
+    <label class="switch">
+      <input type="checkbox" id="emailReminders">
+      <span class="slider"></span>
+    </label>
+
+  </div>
+
+  <!-- PRIVACY -->
+  <div class="settings-row">
+
+    <div class="settings-left">
+      <div class="settings-icon">🔒</div>
+
+      <div>
+        <h4>Privacy Mode</h4>
+        <p>Hide sensitive wellness activity</p>
+      </div>
+    </div>
+
+    <label class="switch">
+      <input type="checkbox" id="privacyMode">
+      <span class="slider"></span>
+    </label>
+
+  </div>
+
+  <!-- LANGUAGE -->
+  <div class="settings-row">
+
+    <div class="settings-left">
+      <div class="settings-icon">🌐</div>
+
+      <div>
+        <h4>Language</h4>
+        <p>Select your preferred language</p>
+      </div>
+    </div>
+
+    <select id="language" class="modern-select">
       <option>English</option>
       <option>Hindi</option>
     </select>
+
   </div>
 
-  <div class="settings-toggle">🔐 Change Password <button>Edit</button></div>
-  <div class="settings-toggle">📤 Export Data <button>Export</button></div>
+  <!-- ACTION BUTTONS -->
+  <div class="settings-actions">
+
+    <button class="modern-btn primary-btn" id="saveSettingsBtn">
+      💾 Save Settings
+    </button>
+
+    <button class="modern-btn secondary-btn" id="changePasswordBtn">
+      🔐 Change Password
+    </button>
+
+    <button class="modern-btn export-btn" id="exportDataBtn">
+      📤 Export Data
+    </button>
+
+  </div>
+
 </div>
 
 <!-- ACCOUNT ACTIONS -->
 <div class="card">
+
   <h3>Account Actions</h3>
 
   <div class="account-actions">
-    <button>✏️ Edit Profile</button>
-    <button class="logout" onclick="logout()">🚪 Logout</button>
-    <button class="delete">⚠️ Delete Account</button>
+
+    <button id="editProfileBtnBottom">
+  ✏️ Edit Profile
+</button>
+
+    <button class="logout">
+      🚪 Logout
+    </button>
+
+    <button class="delete" id="deleteAccountBtn">
+      ⚠️ Delete Account
+    </button>
+
   </div>
+
 </div>
 
 </div>
 
 <script src="script/navbar.js"></script>
 <script src="script/common.js"></script>
-<script src="script/profile.js"></script>
 <script src="script/api.js"></script>
+<script src="script/profile.js"></script>
 <script src="script/authGuard.js"></script>
 
+<!-- EDIT PROFILE MODAL -->
+<div class="modal" id="editProfileModal">
+
+  <div class="modal-content">
+
+    <h2>Edit Profile</h2>
+
+    <input
+      type="text"
+      id="editName"
+      placeholder="Enter name"
+    />
+
+    <input
+      type="email"
+      id="editEmail"
+      placeholder="Enter email"
+    />
+
+    <div class="modal-buttons">
+      <button id="saveProfileBtn">
+        Save Changes
+      </button>
+
+      <button id="closeModalBtn">
+        Cancel
+      </button>
+    </div>
+
+  </div>
+
+</div>
 
 <script>
   checkAuth(); // 🔐 protect chat page

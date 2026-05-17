@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime,Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -12,6 +12,15 @@ class User(Base):
     email = Column(String(120), unique=True, index=True)
     password = Column(String(255))
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    # =========================
+    # SETTINGS
+    # =========================
+    dark_mode = Column(Boolean, default=True)
+    notifications = Column(Boolean, default=True)
+    email_reminders = Column(Boolean, default=False)
+    privacy_mode = Column(Boolean, default=False)
+    language = Column(String(20), default="English")
 
 class ChatSession(Base):
     __tablename__ = "chat_sessions"

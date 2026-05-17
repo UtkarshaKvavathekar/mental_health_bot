@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+body.dark-mode .chat-container{
+    background:#1f2937;
+}
+
 body {
   font-family: Inter, Arial, sans-serif;
   background: linear-gradient(135deg, #dff9fb, #c7ecee);
@@ -346,4 +350,97 @@ body {
 .controls {
   position: relative;
   z-index: 10;
+}
+
+
+/* ================= DARK MODE - MEDITATION PAGE ================= */
+
+body.dark-mode {
+background: linear-gradient(135deg, #0f172a, #111827);
+color: #f3f4f6;
+}
+
+/* Titles */
+body.dark-mode .relief-title,
+body.dark-mode #title,
+body.dark-mode #groundingStep,
+body.dark-mode #affirmText {
+color: #f9fafb;
+}
+
+/* Subtitles */
+body.dark-mode .relief-subtitle,
+body.dark-mode #subtitle,
+body.dark-mode .intro-sub,
+body.dark-mode #reframeOutput {
+color: #d1d5db;
+}
+
+/* Relief cards */
+body.dark-mode .relief-card {
+background: #1f2937;
+color: white;
+box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* Card descriptions */
+body.dark-mode .card-description {
+color: #d1d5db;
+}
+
+/* Meditation circle glow */
+body.dark-mode #circle {
+box-shadow: 0 0 50px rgba(34, 211, 238, 0.5);
+}
+
+/* Grounding card */
+body.dark-mode .grounding-card {
+background: #1e293b;
+color: white;
+}
+
+/* Body scan parts */
+body.dark-mode .part {
+background: #374151;
+color: white;
+}
+
+body.dark-mode .part.active {
+background: #8b5cf6;
+}
+
+/* Reframe card */
+body.dark-mode .reframe-card {
+background: #1f2937;
+color: white;
+}
+
+/* Textarea */
+body.dark-mode #reframeInput {
+background: #111827;
+color: white;
+border: 1px solid #4b5563;
+}
+
+/* Buttons */
+body.dark-mode #reframeBtn,
+body.dark-mode #pauseBtn,
+body.dark-mode #resumeBtn,
+body.dark-mode #stopBtn {
+color: white;
+}
+
+/* Intro */
+body.dark-mode .intro-text {
+color: white;
+}
+
+/* Sleep text */
+body.dark-mode #sleepText {
+color: #f3f4f6;
+}
+
+/* Meditation container */
+body.dark-mode .meditationContainer {
+color: white;
 }

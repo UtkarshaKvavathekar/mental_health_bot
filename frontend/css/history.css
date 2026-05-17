@@ -4,6 +4,9 @@
   padding:0;
   box-sizing:border-box;
 }
+body.dark-mode .chat-container{
+    background:#1f2937;
+}
 
 body{
   font-family:"Inter",sans-serif;
@@ -226,4 +229,88 @@ button{
     display:block;
     overflow-x:auto;
   }
+}
+
+
+/* ================= DARK MODE - HISTORY PAGE ================= */
+
+body.dark-mode {
+background: linear-gradient(135deg, #0f172a, #111827);
+color: #f3f4f6;
+}
+
+/* Main card */
+body.dark-mode .card {
+background: rgba(30, 41, 59, 0.92);
+border: 1px solid rgba(255,255,255,0.08);
+box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* Heading */
+body.dark-mode h2 {
+color: #f9fafb;
+}
+
+/* Stats boxes */
+body.dark-mode .stat-box {
+background: #1f2937;
+border: 1px solid #374151;
+color: white;
+}
+
+body.dark-mode .stat-box p {
+color: #d1d5db;
+}
+
+body.dark-mode .stat-box h3 {
+color: #2dd4bf;
+}
+
+/* Table */
+body.dark-mode table {
+background: #1f2937;
+color: white;
+}
+
+/* Table header */
+body.dark-mode th {
+background: #111827;
+color: #f9fafb;
+}
+
+/* Table rows */
+body.dark-mode td {
+border-bottom: 1px solid #374151;
+color: #e5e7eb;
+}
+
+body.dark-mode tr:hover {
+background: #374151;
+}
+
+/* Empty state */
+body.dark-mode .empty {
+color: #d1d5db;
+}
+
+/* Loading text */
+body.dark-mode #historyLoading {
+color: #2dd4bf;
+}
+
+/* Buttons */
+body.dark-mode .dashboard-btn {
+background: #2563eb;
+}
+
+body.dark-mode .dashboard-btn:hover {
+background: #1d4ed8;
+}
+
+body.dark-mode .clear-btn {
+background: #dc2626;
+}
+
+body.dark-mode .clear-btn:hover {
+background: #b91c1c;
 }

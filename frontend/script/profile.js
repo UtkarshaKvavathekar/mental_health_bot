@@ -1,154 +1,628 @@
-// 🔐 Check login
-const auth = checkAuth();
-const user = auth.user;
-const token = auth.token;
-const userId = auth.userId;
-const loadingEl = document.getElementById("profileLoading");
+const API_BASE_URL = "http://127.0.0.1:8000";
 
-// ===============================
-// 🚀 Load Profile
-// ===============================
-async function loadProfile() {
-  loadingEl.style.display = "block";
-  try {
-    const data = await apiRequest(`/profile/${user.id}`);
+// ================================
+// AUTH HELPERS
+// ================================
+function getToken() {
+  return localStorage.getItem("token");
+}
 
-  } catch (err) {
-    console.log(err);
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("user_id");
 
-  document.getElementById("profileLoading").innerHTML =
-    "Failed to load profile. Please try again later.";
+  window.location.href = "login.html";
+}
 
-    updateUI({
-      name: "User",
-      email: "N/A",
-      memberSince: "N/A",
-      id: user.id,
-      messagesSent: 0,
-      meditationSessions: 0,
-      totalMeditationTime: 0,
-      streak: 0,
-      moodEntries: 0,
-      daysUsingApp: 0,
-      moodHistory: [],
-      recentMeditations: [],
-    });
+// ================================
+// API REQUEST
+// ================================
+async function fetchProfile() {
+  const token = getToken();
+
+  if (!token) {
+    checkAuth();
+    return;
   }
-  finally{
-    loadingEl.style.display = "none";
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/profile/me`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.status === 401) {
+      logout();
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch profile");
+    }
+
+    const data = await response.json();
+
+    renderProfile(data);
+
+  } catch (error) {
+    console.error("PROFILE FETCH ERROR:", error);
+
+    document.getElementById("profileLoading").innerHTML =
+      "Failed to load profile.";
+
+    alert("Unable to load profile data.");
   }
 }
 
-// ===============================
-// 🎯 Update UI
-// ===============================
-function updateUI(data) {
-  // Avatar
-  const avatar = document.getElementById("avatar");
-  if (avatar)
-    avatar.innerText = (data.name || "U").charAt(0);
+// ================================
+// RENDER PROFILE
+// ================================
+function renderProfile(data) {
 
-  // Basic Info
+  document.getElementById("profileLoading").style.display = "none";
+
+  // ==================================
+  // HEADER
+  // ==================================
   document.getElementById("userName").innerText =
-    data.name || "User";
+    data.user.name || "User";
 
   document.getElementById("userEmail").innerText =
-    "Email: " + (data.email || "N/A");
+    data.user.email || "No email";
 
   document.getElementById("memberSince").innerText =
-    "Member Since: " + (data.memberSince || "N/A");
+    `Member Since: ${formatDate(data.user.created_at)}`;
 
   document.getElementById("userId").innerText =
-    "User ID: #" + (data.id || user.id);
+    `User ID: #${data.user.id}`;
 
-  // Stats (safe update)
-  const stats = document.querySelectorAll(".stat-box p");
+  document.getElementById("avatar").innerText =
+    data.user.name?.charAt(0).toUpperCase() || "U";
 
-  if (stats.length >= 6) {
-    stats[0].innerText = data.messagesSent ?? 0;
-    stats[1].innerText = data.meditationSessions ?? 0;
-    stats[2].innerText = (data.totalMeditationTime ?? 0) + " min";
-    stats[3].innerText = (data.streak ?? 0) + " Days";
-    stats[4].innerText = data.moodEntries ?? 0;
-    stats[5].innerText = data.daysUsingApp ?? 0;
-  }
+  // ==================================
+  // STAT BOXES
+  // ==================================
+  const statBoxes = document.querySelectorAll(".stat-box p");
 
-  // Mood Chart
-  renderChart(data.moodHistory || []);
+  statBoxes[0].innerText = data.stats.messages_sent;
 
-  // Meditation History
-  renderMeditation(data.recentMeditations || []);
+  statBoxes[1].innerText = data.stats.meditation_sessions;
+
+  statBoxes[2].innerText =
+    `${data.stats.total_meditation_minutes} mins`;
+
+  statBoxes[3].innerText =
+    `${data.stats.current_streak} days`;
+
+  statBoxes[4].innerText =
+    data.stats.mood_entries_logged;
+
+  statBoxes[5].innerText =
+    `${data.stats.days_using_app} days`;
+
+  // ==================================
+  // MOOD CHART
+  // ==================================
+  renderMoodChart(data.mood_trends);
+
+  // ==================================
+  // MEDITATION SESSIONS
+  // ==================================
+  renderMeditationSessions(data.recent_meditations);
+
+  loadSettings(data);
+
+  renderMeditationSessions(data.recent_meditations);
+
+loadSettings(data);
 }
 
-// ===============================
-// 📊 Mood Chart
-// ===============================
-function renderChart(moodData) {
-  const container = document.getElementById("moodChart");
-  if (!container) return;
+// ================================
+// MOOD CHART
+// ================================
+function renderMoodChart(moodData) {
 
-  container.innerHTML = "";
+  const chart = document.getElementById("moodChart");
 
-  if (!moodData.length) {
-    container.innerHTML = "<p>No mood data yet</p>";
+  chart.innerHTML = "";
+
+  if (!moodData || moodData.length === 0) {
+    chart.innerHTML = `
+      <p style="padding:20px;">
+        No mood data available
+      </p>
+    `;
     return;
   }
 
   moodData.forEach((item) => {
+
+    const safeValue = Math.max(5, item.value);
+
     const barItem = document.createElement("div");
     barItem.className = "bar-item";
 
-    const bar = document.createElement("div");
-    bar.className = "bar";
-    bar.style.height = (item.value || 0) + "%";
+    barItem.innerHTML = `
+      <div 
+        class="bar" 
+        style="height:${safeValue}%;"
+        title="${item.value}"
+      ></div>
 
-    const label = document.createElement("div");
-    label.className = "bar-label";
-    label.innerText = item.day || "";
+      <div class="bar-label">
+        ${item.day}
+      </div>
+    `;
 
-    barItem.appendChild(bar);
-    barItem.appendChild(label);
-    container.appendChild(barItem);
+    chart.appendChild(barItem);
   });
 }
 
-// ===============================
-// 🧘 Meditation List
-// ===============================
-function renderMeditation(list) {
-  const container = document.getElementById("meditationList");
-  if (!container) return;
+// ================================
+// MEDITATION LIST
+// ================================
+function renderMeditationSessions(sessions) {
 
-  if (!list || list.length === 0) {
-    container.innerHTML = "<p>No sessions yet 🧘</p>";
-    return;
-  }
+  const container = document.getElementById("meditationList");
 
   container.innerHTML = "";
 
-  list.forEach((item) => {
+  if (!sessions || sessions.length === 0) {
+    container.innerHTML = `
+      <p>No recent sessions found.</p>
+    `;
+    return;
+  }
+
+  sessions.forEach((session) => {
+
     const div = document.createElement("div");
+
     div.className = "meditation-session";
 
     div.innerHTML = `
-      <p>🧘 ${item.exercise || "-"}</p>
-      <p>${item.time || "-"} • ${item.duration || 0} min</p>
-      <p>Mood: ${item.moodBefore || "-"} → ${item.moodAfter || "-"}</p>
+      <p><strong>Exercise:</strong> ${session.exercise}</p>
+      <p><strong>Duration:</strong> ${session.duration} mins</p>
+      <p><strong>Date:</strong> ${session.date}</p>
     `;
 
     container.appendChild(div);
   });
 }
 
-// ===============================
-// 🔒 Prevent Back Navigation
-// ===============================
-window.history.pushState(null, "", window.location.href);
-window.onpopstate = function () {
-  window.history.pushState(null, "", window.location.href);
-};
+// ================================
+// DATE FORMATTER
+// ================================
+function formatDate(dateString) {
 
-// ===============================
-// 🚀 INIT
-// ===============================
-loadProfile();
+  if (!dateString) return "N/A";
+
+  const date = new Date(dateString);
+
+  return date.toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+// ================================
+// LOGOUT BUTTONS
+// ================================
+document.addEventListener("DOMContentLoaded", () => {
+
+  const logoutBtn = document.querySelector(".logout");
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", logout);
+  }
+
+    // =========================
+  // EDIT PROFILE BUTTON
+  // =========================
+
+  const editBtn =
+  document.getElementById("editProfileBtn");
+
+const bottomEditBtn =
+  document.getElementById("editProfileBtnBottom");
+
+  const modal =
+    document.getElementById("editProfileModal");
+
+  const closeModalBtn =
+    document.getElementById("closeModalBtn");
+
+  const saveProfileBtn =
+    document.getElementById("saveProfileBtn");
+
+  // =========================
+// OPEN MODAL FUNCTION
+// =========================
+
+function openEditModal() {
+
+  document.getElementById("editName").value =
+    document.getElementById("userName").innerText;
+
+  document.getElementById("editEmail").value =
+    document.getElementById("userEmail").innerText;
+
+  modal.style.display = "flex";
+}
+
+// TOP BUTTON
+editBtn?.addEventListener(
+  "click",
+  openEditModal
+);
+
+// BOTTOM BUTTON
+bottomEditBtn?.addEventListener(
+  "click",
+  openEditModal
+);
+
+  // CLOSE MODAL
+  closeModalBtn.addEventListener("click", () => {
+
+    modal.style.display = "none";
+  });
+
+  // SAVE PROFILE
+  saveProfileBtn.addEventListener("click", async () => {
+
+    const name =
+      document.getElementById("editName").value;
+
+    const email =
+      document.getElementById("editEmail").value;
+
+    try {
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/profile/update`,
+        {
+          method: "PUT",
+
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken()}`
+          },
+
+          body: JSON.stringify({
+            name,
+            email
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+
+        alert(data.detail || "Update failed");
+        return;
+      }
+
+      alert("Profile updated successfully");
+
+      modal.style.display = "none";
+
+      fetchProfile();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Something went wrong");
+    }
+  });
+
+  
+
+document
+  .getElementById("saveSettingsBtn")
+  ?.addEventListener("click", saveSettings);
+
+document
+  .getElementById("changePasswordBtn")
+  ?.addEventListener("click", changePassword);
+
+document
+  .getElementById("exportDataBtn")
+  ?.addEventListener("click", exportData);
+
+document
+  .getElementById("deleteAccountBtn")
+  ?.addEventListener("click", deleteAccount);
+
+
+  // DARK MODE TOGGLE LIVE
+document
+  .getElementById("darkMode")
+  ?.addEventListener("change", function () {
+
+    if (this.checked) {
+
+      document.body.classList.add("dark-mode");
+
+      localStorage.setItem(
+        "darkMode",
+        "true"
+      );
+
+    } else {
+
+      document.body.classList.remove("dark-mode");
+
+      localStorage.setItem(
+        "darkMode",
+        "false"
+      );
+    }
+
+});
+
+  fetchProfile();
+});
+
+
+// ======================================
+// SAVE SETTINGS
+// ======================================
+
+async function saveSettings() {
+
+  try {
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/profile/settings`,
+      {
+
+        method: "PUT",
+
+        headers: {
+          "Content-Type": "application/json",
+
+          Authorization: `Bearer ${getToken()}`
+        },
+
+        body: JSON.stringify({
+
+          dark_mode:
+            document.getElementById("darkMode").checked,
+
+          notifications:
+            document.getElementById("notifications").checked,
+
+          email_reminders:
+            document.getElementById("emailReminders").checked,
+
+          privacy_mode:
+            document.getElementById("privacyMode").checked,
+
+          language:
+            document.getElementById("language").value
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to save settings");
+    }
+
+    // SAVE DARK MODE
+localStorage.setItem(
+  "darkMode",
+  document.getElementById("darkMode").checked
+);
+
+// // APPLY IMMEDIATELY
+// applyDarkMode();
+
+alert("Settings saved successfully");
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Failed to save settings");
+  }
+}
+
+
+// ======================================
+// CHANGE PASSWORD
+// ======================================
+
+async function changePassword() {
+
+  const oldPassword = prompt(
+    "Enter old password"
+  );
+
+  if (!oldPassword) return;
+
+  const newPassword = prompt(
+    "Enter new password"
+  );
+
+  if (!newPassword) return;
+
+  try {
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/profile/change-password`,
+      {
+
+        method: "PUT",
+
+        headers: {
+          "Content-Type": "application/json",
+
+          Authorization: `Bearer ${getToken()}`
+        },
+
+        body: JSON.stringify({
+          old_password: oldPassword,
+          new_password: newPassword
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail);
+    }
+
+    alert("Password changed successfully");
+
+  } catch (error) {
+
+    alert(error.message);
+  }
+}
+
+
+// ======================================
+// EXPORT DATA
+// ======================================
+
+async function exportData() {
+
+  try {
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/profile/export`,
+      {
+
+        headers: {
+          Authorization: `Bearer ${getToken()}`
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    const blob = new Blob(
+      [JSON.stringify(data, null, 2)],
+      {
+        type: "application/json"
+      }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+
+    a.download = "serene-data.json";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Failed to export data");
+  }
+}
+
+
+// ======================================
+// DELETE ACCOUNT
+// ======================================
+
+async function deleteAccount() {
+
+  const confirmDelete = confirm(
+    "Are you sure you want to delete your account?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/profile/delete`,
+      {
+
+        method: "DELETE",
+
+        headers: {
+          Authorization: `Bearer ${getToken()}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Delete failed");
+    }
+
+    alert("Account deleted");
+
+    logout();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Failed to delete account");
+  }
+}
+
+
+// ======================================
+// LOAD SETTINGS
+// ======================================
+
+
+function loadSettings(data) {
+
+  // ===============================
+  // LOAD SETTINGS
+  // ===============================
+
+  document.getElementById("notifications").checked =
+    data.user.notifications || false;
+
+  document.getElementById("emailReminders").checked =
+    data.user.email_reminders || false;
+
+  document.getElementById("privacyMode").checked =
+    data.user.privacy_mode || false;
+
+  document.getElementById("language").value =
+    data.user.language || "English";
+
+  // ===============================
+  // DARK MODE
+  // ===============================
+
+  // Get latest value from localStorage
+  const savedDarkMode =
+    localStorage.getItem("darkMode") === "true";
+
+  // Set toggle
+  document.getElementById("darkMode").checked =
+    savedDarkMode;
+
+  // Apply class
+  if (savedDarkMode) {
+
+    document.body.classList.add("dark-mode");
+
+  } else {
+
+    document.body.classList.remove("dark-mode");
+  }
+}

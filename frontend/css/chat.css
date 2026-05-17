@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+body.dark-mode .chat-container{
+    background:#1f2937;
+}
+
 /* body {
   font-family:
     "Inter",

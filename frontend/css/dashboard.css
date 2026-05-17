@@ -5,6 +5,10 @@
   box-sizing:border-box;
 }
 
+body.dark-mode .chat-container{
+    background:#1f2937;
+}
+
 /* body{
   font-family:"Inter",sans-serif;
   background:linear-gradient(135deg,#e0f2f1 0%,#b2dfdb 100%);
@@ -249,4 +253,73 @@
 .mood-btn.active{
   background:#26a69a;
   transform:scale(1.1);
+}
+
+/* ===================================
+   LIGHT MODE STAT COLORS
+=================================== */
+
+.stat-green{
+  background:#f1f8e9;
+}
+
+.stat-purple{
+  background:#ede7f6;
+}
+
+.stat-orange{
+  background:#fff3e0;
+}
+
+/* ===================================
+   DARK MODE FIXES
+=================================== */
+
+body.dark-mode .card{
+  background:#1f2937;
+  color:white;
+}
+
+body.dark-mode .welcome p,
+body.dark-mode .y-axis,
+body.dark-mode .bar-label{
+  color:#d1d5db;
+}
+
+body.dark-mode .focus-box{
+  background:#111827;
+  color:white;
+}
+
+body.dark-mode .insight{
+  background:#111827;
+  color:white;
+}
+
+body.dark-mode .mood-btn{
+  background:#374151;
+  color:white;
+}
+
+/* DARK MODE STAT CARDS */
+
+body.dark-mode .stat-green{
+  background:#2d3b2f;
+  color:white;
+}
+
+body.dark-mode .stat-purple{
+  background:#3a3148;
+  color:white;
+}
+
+body.dark-mode .stat-orange{
+  background:#4a3b2a;
+  color:white;
+}
+
+body.dark-mode .stat-box small,
+body.dark-mode .stat-box h4,
+body.dark-mode .stat-box p{
+  color:white;
 }
