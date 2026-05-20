@@ -55,16 +55,16 @@ async function handleAuth() {
 
       localStorage.setItem("token", data.access_token);
       localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: data.user_id,
-          email: data.email,
-        })
-      );
+  "user",
+  JSON.stringify({
+    id: data.user_id,
+    name: data.name,
+    email: data.email,
+  })
+);
       // 🚀 CLEAR OLD USER CHAT STATE
 localStorage.removeItem("activeChatId");
 
-window.location.href = "dashboard.html";
 
       window.location.href = "dashboard.html";
     }

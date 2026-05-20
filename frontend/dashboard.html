@@ -3,119 +3,226 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Serene | Dashboard</title>
+
+    <!-- GOOGLE FONT -->
+    <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
 
     <link rel="stylesheet" href="css/common.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
   </head>
 
   <body>
+    <!-- SIDEBAR -->
     <div id="navbar"></div>
-    <!-- Navbar will be injected -->
 
-    <div class="container">
-      <!-- Welcome -->
-      <div class="card welcome">
-        <h2 id="welcome">Loading...</h2>
-        <p id="streakText">Loading streak...</p>
-        <div id="dashboardLoading">Loading dashboard...</div>
-      </div>
+    <!-- APP -->
+    <div class="app-layout">
 
-      <!-- Today's Focus -->
-      <div class="card">
-        <h3>🎯 Today's Focus</h3>
-        <div class="focus-box">
-          <strong id="todayFocus">Loading...</strong>
-          <p
-            id="focusTip"
-            style="margin-top: 8px; font-size: 14px; color: #555"
-          >
+
+      <!-- CONTENT -->
+      <main class="dashboard-content">
+
+        <div class="page-header">
+
+  <h1>
+    Dashboard
+  </h1>
+
+  <p>
+    Welcome back to your wellness journey 
+  </p>
+
+</div>
+
+        <!-- HERO -->
+        <section class="hero-card">
+          <div class="hero-left">
+            <div class="hero-badge">
+              <i class="fa-solid fa-sparkles"></i>
+Daily Wellness Overview
+            </div>
+
+            <h2 id="welcome">Loading...</h2>
+
+            <p id="streakText">
+              Loading streak...
+            </p>
+
+            <div id="dashboardLoading">
+              Loading dashboard...
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <div class="hero-circle">
+              <i class="fa-solid fa-leaf"></i>
+            </div>
+          </div>
+        </section>
+
+        <!-- GRID -->
+        <div class="dashboard-grid">
+
+          <!-- FOCUS -->
+          <div class="card glass-card">
+            <div class="card-header">
+              <h3>
+  <i class="fa-solid fa-bullseye"></i>
+  Today's Focus
+</h3>
+            </div>
+
+            <div class="focus-box">
+              <strong id="todayFocus">Loading...</strong>
+
+              <p id="focusTip">
+                Loading...
+              </p>
+            </div>
+          </div>
+
+          <!-- MOOD -->
+          <div class="card glass-card">
+            <div class="card-header">
+              <h3>
+  <i class="fa-solid fa-face-smile"></i>
+  Mood Check-In
+</h3>
+            </div>
+
+            <div class="mood-options">
+              <button class="mood-btn">😊</button>
+              <button class="mood-btn">😌</button>
+              <button class="mood-btn">😐</button>
+              <button class="mood-btn">😔</button>
+              <button class="mood-btn">😰</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STATS -->
+        <section class="card glass-card">
+          <div class="card-header">
+            <h3>
+  <i class="fa-solid fa-chart-column"></i>
+  Your Progress
+</h3>
+          </div>
+
+          <div class="stats-grid">
+
+            <div class="stat-box stat-green">
+              <i class="fa-solid fa-spa"></i>
+
+              <div>
+                <h4>Meditation Minutes</h4>
+                <p>-</p>
+                <small>This week</small>
+              </div>
+            </div>
+
+            <div class="stat-box stat-purple">
+              <div class="stat-icon"><i class="fa-solid fa-comments"></i></div>
+
+              <div>
+                <h4>Chat Sessions</h4>
+                <p>-</p>
+                <small>Total messages</small>
+              </div>
+            </div>
+
+            <div class="stat-box stat-orange">
+              <div class="stat-icon"><i class="fa-solid fa-fire"></i></div>
+
+              <div>
+                <h4>Mindfulness Streak</h4>
+                <p>-</p>
+                <small>Keep going!</small>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- CHART -->
+        <section class="card glass-card">
+          <div class="card-header">
+            <h3>
+  <i class="fa-solid fa-chart-line"></i>
+  Weekly Mood Overview
+</h3>
+          </div>
+
+          <div class="chart-wrapper">
+
+            <div class="y-axis">
+              <span>100</span>
+              <span>75</span>
+              <span>50</span>
+              <span>25</span>
+              <span>0</span>
+            </div>
+
+            <div class="chart-bars" id="chartBars"></div>
+
+          </div>
+        </section>
+
+        <!-- INSIGHT -->
+        <section class="card glass-card">
+          <div class="card-header">
+            <h3>
+  <i class="fa-solid fa-lightbulb"></i>
+  Emotional Insight
+</h3>
+          </div>
+
+          <div class="insight" id="insight">
             Loading...
-          </p>
-        </div>
-      </div>
+          </div>
+        </section>
 
-      <!-- Mood -->
-      <div class="card">
-        <h3>How are you feeling today?</h3>
-        <div class="mood-options">
-          <button class="mood-btn">😊</button>
-          <button class="mood-btn">😐</button>
-          <button class="mood-btn">😔</button>
-          <button class="mood-btn">😰</button>
-          <button class="mood-btn">😡</button>
-        </div>
-      </div>
-
-      <!-- Stats -->
-      <div class="card">
-        <h3>📊 Your Progress</h3>
-        <div class="stats-grid">
-          <div class="stat-box stat-green">
-            <h4>🧘 Meditation Minutes</h4>
-            <p>-</p>
-            <small>This week</small>
+        <!-- ACTIONS -->
+        <section class="card glass-card">
+          <div class="card-header">
+            <h3>
+  <i class="fa-solid fa-bolt"></i>
+  Quick Actions
+</h3>
           </div>
 
-          <div class="stat-box stat-purple">
-            <h4>💬 Chat Messages</h4>
-            <p>-</p>
-            <small>Sessions</small>
+          <div class="action-buttons">
+
+            <a href="chat.html" class="action-btn teal">
+              <i class="fa-solid fa-comment-dots"></i>
+Start Chat
+            </a>
+
+            <a href="meditation.html" class="action-btn purple">
+              🧘 Meditation
+            </a>
+
+            <a href="history.html" class="action-btn violet">
+              📜 History
+            </a>
+
+            <a href="profile.html" class="action-btn blue">
+              👤 Profile
+            </a>
+
           </div>
+        </section>
 
-          <div class="stat-box stat-orange">
-            <h4>🔥 Streak</h4>
-            <p>-</p>
-            <small>Keep going!</small>
-          </div>
-        </div>
-      </div>
-
-      <!-- Chart -->
-      <div class="card">
-        <h3>Weekly Mood Overview</h3>
-        <div class="chart-wrapper">
-          <div class="y-axis">
-            <span>100</span>
-            <span>75</span>
-            <span>50</span>
-            <span>25</span>
-            <span>0</span>
-          </div>
-
-          <div class="chart-bars" id="chartBars"></div>
-        </div>
-      </div>
-
-      <!-- Insight -->
-      <div class="card">
-        <h3>Your Emotional Insight</h3>
-        <div class="insight" id="insight">Loading...</div>
-      </div>
-
-      <!-- Actions -->
-      <div class="card">
-        <h3>⚡ Quick Actions</h3>
-        <div class="action-buttons">
-          <a href="chat.html" class="action-btn" style="background: #26a69a"
-            >💬 Start Chat</a
-          >
-          <a
-            href="meditation.html"
-            class="action-btn"
-            style="background: #6b4c7c"
-            >🧘 Start Meditation</a
-          >
-          <a href="history.html" class="action-btn" style="background: #8e44ad"
-            >📜 Session History</a
-          >
-          <a href="profile.html" class="action-btn" style="background: #3949ab"
-            >👤 View Profile</a
-          >
-        </div>
-      </div>
+      </main>
     </div>
 
+    <!-- SCRIPTS -->
     <script src="script/navbar.js"></script>
     <script src="script/common.js"></script>
     <script src="script/api.js"></script>

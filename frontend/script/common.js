@@ -1,27 +1,102 @@
-// ======================================
-// APPLY DARK MODE GLOBALLY
-// ======================================
+// ========================================
+// GLOBAL APP INITIALIZATION
+// ========================================
 
-function applyDarkMode() {
+document.addEventListener("DOMContentLoaded", () => {
 
-  const isDarkMode =
-    localStorage.getItem("darkMode") === "true";
+  initializeTheme();
 
-  if (isDarkMode) {
-    document.body.classList.add("dark-mode");
-  } else {
-    document.body.classList.remove("dark-mode");
+  initializeTopbar();
+
+});
+
+// ========================================
+// THEME SYSTEM
+// ========================================
+
+function initializeTheme() {
+
+  const savedTheme =
+    localStorage.getItem("theme") || "light";
+
+  document.body.setAttribute(
+    "data-theme",
+    savedTheme
+  );
+
+  updateThemeIcon(savedTheme);
+
+}
+
+function toggleTheme() {
+
+  const currentTheme =
+    document.body.getAttribute("data-theme");
+
+  const newTheme =
+    currentTheme === "dark"
+      ? "light"
+      : "dark";
+
+  document.body.setAttribute(
+    "data-theme",
+    newTheme
+  );
+
+  localStorage.setItem(
+    "theme",
+    newTheme
+  );
+
+  updateThemeIcon(newTheme);
+}
+
+function updateThemeIcon(theme) {
+
+  const themeBtn =
+    document.getElementById("themeToggle");
+
+  if (!themeBtn) return;
+
+  themeBtn.innerHTML =
+  theme === "dark"
+    ? "☀"
+    : "☾";
+}
+
+// ========================================
+// TOPBAR USER INFO
+// ========================================
+
+function initializeTopbar() {
+
+  const user =
+    JSON.parse(localStorage.getItem("user")) || {};
+
+  const userNameEl =
+    document.getElementById("topbarUserName");
+
+  const avatarEl =
+    document.getElementById("topbarAvatar");
+
+  const name =
+    user.name || "Sayali Patil";
+
+  if (userNameEl) {
+
+    userNameEl.textContent = name;
+  }
+
+  if (avatarEl) {
+
+    avatarEl.textContent =
+      name.charAt(0).toUpperCase();
   }
 }
 
-// APPLY AFTER PAGE LOAD
-document.addEventListener("DOMContentLoaded", () => {
-  applyDarkMode();
-});
-
-// ======================================
+// ========================================
 // LOGOUT
-// ======================================
+// ========================================
 
 function logout() {
 
@@ -29,5 +104,5 @@ function logout() {
   localStorage.removeItem("user");
   localStorage.removeItem("activeChatId");
 
-  window.location.href = "auth.html";
+  window.location.href =  "/frontend/auth.html";
 }

@@ -1,446 +1,1142 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* =========================================
+   RESET
+========================================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-body.dark-mode .chat-container{
-    background:#1f2937;
+/* =========================================
+   PAGE LAYOUT
+========================================= */
+
+body{
+
+  overflow-x:hidden;
 }
 
-body {
-  font-family: Inter, Arial, sans-serif;
-  background: linear-gradient(135deg, #dff9fb, #c7ecee);
-  min-height: 100vh;
-  color: #1a202c;
+.meditation-page{
+
+  margin-left:280px;
+
+  padding:
+    94px 24px 24px;
+
+  min-height:100vh;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8fbff 0%,
+      #eef6ff 100%
+    );
 }
 
-.container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 40px 20px;
+/* =========================================
+   MAIN CONTAINER
+========================================= */
+
+.container{
+
+  width:100%;
+  max-width:1400px;
+
+  margin:0 auto;
+
+  display:flex;
+  flex-direction:column;
+
+  gap:24px;
 }
 
-.relief-title {
-  font-size: 40px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 10px;
+/* =========================================
+   RELIEF CONTAINER
+========================================= */
+
+.relief-container{
+
+  width:100%;
+
+  background:var(--card);
+
+  border:1px solid var(--border);
+
+  border-radius:30px;
+
+  padding:34px;
+
+  box-shadow:var(--shadow);
 }
 
-.relief-subtitle {
-  text-align: center;
-  color: #555;
-  margin-bottom: 40px;
+/* =========================================
+   HEADER
+========================================= */
+
+.relief-title{
+
+  font-size:34px;
+  font-weight:700;
+
+  color:var(--text);
+
+  margin-bottom:10px;
+
+  line-height:1.2;
 }
 
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
+.relief-subtitle{
+
+  color:var(--text-light);
+
+  font-size:15px;
+
+  margin-bottom:30px;
 }
 
-.relief-card {
-  background: #fff;
-  border-radius: 18px;
-  padding: 28px;
-  cursor: pointer;
-  transition: 0.25s;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+/* =========================================
+   GRID
+========================================= */
+
+.cards-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap:22px;
+
+  align-items:stretch;
 }
 
-.relief-card:hover {
-  transform: translateY(-6px);
+
+/* =========================================
+   RESPONSIVE CARD GRID
+========================================= */
+
+@media(max-width:1200px){
+
+  .cards-grid{
+
+    grid-template-columns:
+      repeat(2,1fr);
+  }
 }
 
-.card-icon {
-  font-size: 42px;
-  margin-bottom: 14px;
+@media(max-width:768px){
+
+  .cards-grid{
+
+    grid-template-columns:1fr;
+  }
 }
 
-.card-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 10px;
+
+
+/* =========================================
+   CARD
+========================================= */
+
+.relief-card{
+
+  position:relative;
+
+  border-radius:26px;
+
+  padding:26px;
+
+  min-height:210px;
+
+  border:1px solid rgba(255,255,255,0.4);
+
+  cursor:pointer;
+
+  overflow:hidden;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  box-shadow:
+    0 10px 30px rgba(15,23,42,0.06);
+
+  display:flex;
+  flex-direction:column;
 }
 
-.card-description {
-  color: #666;
-  line-height: 1.5;
+.relief-card:hover{
+
+  transform:
+    translateY(-6px);
+
+  box-shadow:
+    0 18px 40px rgba(15,23,42,0.12);
 }
 
-.blue {
-  background: #e3f2fd;
-}
-.green {
-  background: #e8f5e9;
-}
-.purple {
-  background: #f3e5f5;
-}
-.yellow {
-  background: #fff9c4;
-}
-.indigo {
-  background: #e8eaf6;
-}
-.pink {
-  background: #fce4ec;
+.relief-card::before{
+
+  content:"";
+
+  position:absolute;
+
+  top:-60px;
+  right:-60px;
+
+  width:140px;
+  height:140px;
+
+  border-radius:50%;
+
+  background:
+    rgba(255,255,255,0.28);
 }
 
-#circle {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #7ed6df, #22a6b3);
-  box-shadow: 0 0 40px rgba(34, 166, 179, 0.5);
+/* =========================================
+   CARD CONTENT
+========================================= */
+
+.card-icon{
+
+  width:68px;
+  height:68px;
+
+  border-radius:22px;
+
+  background:
+    rgba(255,255,255,0.55);
+
+  backdrop-filter:blur(10px);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:34px;
+
+  margin-bottom:22px;
+
+  position:relative;
+  z-index:2;
+}
+
+.card-title{
+
+  font-size:20px;
+  font-weight:700;
+
+  color:#0f172a;
+
+  margin-bottom:12px;
+
+  position:relative;
+  z-index:2;
+}
+
+.card-description{
+
+  font-size:14px;
+
+  line-height:1.7;
+
+  color:#334155;
+
+  position:relative;
+  z-index:2;
+}
+
+/* =========================================
+   CARD COLORS
+========================================= */
+
+.blue{
+  background:
+    linear-gradient(
+      135deg,
+      #dff4ff,
+      #bfe5ff
+    );
+}
+
+.green{
+  background:
+    linear-gradient(
+      135deg,
+      #ddffe9,
+      #bff5d2
+    );
+}
+
+.purple{
+  background:
+    linear-gradient(
+      135deg,
+      #f1e7ff,
+      #dcc8ff
+    );
+}
+
+.yellow{
+  background:
+    linear-gradient(
+      135deg,
+      #fff8d6,
+      #ffec9f
+    );
+}
+
+.indigo{
+  background:
+    linear-gradient(
+      135deg,
+      #e7ebff,
+      #ccd5ff
+    );
+}
+
+.pink{
+  background:
+    linear-gradient(
+      135deg,
+      #ffe2ef,
+      #ffc7de
+    );
+}
+
+/* =========================================
+   MEDITATION CONTAINER
+========================================= */
+
+.meditationContainer{
+
+  width:100%;
+
+  min-height:
+    calc(100vh - 140px);
+
+  background:var(--card);
+
+  border-radius:34px;
+
+  border:1px solid var(--border);
+
+  box-shadow:var(--shadow);
+
+  padding:40px 24px;
+
+  display:flex;
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+
+  overflow:hidden;
+
+  position:relative;
+}
+
+/* =========================================
+   BREATHING CIRCLE
+========================================= */
+
+.circle-wrapper{
+
+  height:240px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#circle{
+
+  width:180px;
+  height:180px;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      circle,
+      #8be9f0,
+      #14b8a6
+    );
+
+  box-shadow:
+    0 0 50px rgba(20,184,166,0.35);
+
   transition:
     transform 4s ease,
-    box-shadow 0.5s;
+    box-shadow 0.4s ease;
 }
 
-.expand {
-  transform: scale(1.4);
-  box-shadow: 0 0 80px rgba(34, 166, 179, 0.9);
+.expand{
+
+  transform:scale(1.35);
+
+  box-shadow:
+    0 0 80px rgba(20,184,166,0.6);
 }
 
-.shrink {
-  transform: scale(1);
+.shrink{
+  transform:scale(1);
 }
 
-.meditationContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 75vh;
-  text-align: center;
-  gap: 20px;
+/* =========================================
+   TITLES
+========================================= */
+
+#title{
+
+  font-size:32px;
+  font-weight:700;
+
+  color:var(--text);
+
+  margin-top:10px;
+  margin-bottom:12px;
 }
 
-#title {
-  font-size: 32px;
-  font-weight: 700;
-  margin-top: 20px;
-  color: #2d3436;
+#subtitle{
+
+  font-size:17px;
+
+  color:var(--text-light);
+
+  max-width:600px;
+
+  line-height:1.7;
 }
 
-#subtitle {
-  font-size: 20px;
-  color: #555;
-  margin-top: 10px;
+/* =========================================
+   CONTROLS
+========================================= */
+
+.controls{
+
+  margin-top:34px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  gap:14px;
+
+  flex-wrap:wrap;
 }
 
-.controls {
-  margin-top: 30px;
-  display: flex;
-  gap: 15px;
+.controls button{
+
+  border:none;
+
+  min-width:120px;
+
+  padding:13px 22px;
+
+  border-radius:18px;
+
+  font-size:14px;
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+
+  color:white;
 }
 
-.controls button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 25px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.3s ease;
-  font-weight: 500;
+.controls button:hover{
+
+  transform:
+    translateY(-3px);
+
+  opacity:0.92;
 }
 
-#pauseBtn {
-  background: #f6b93b;
-  color: white;
+#pauseBtn{
+  background:#f59e0b;
 }
 
-#resumeBtn {
-  background: #38ada9;
-  color: white;
+#resumeBtn{
+  background:#10b981;
 }
 
-#stopBtn {
-  background: #eb2f06;
-  color: white;
+#stopBtn{
+  background:#ef4444;
 }
 
-.controls button:hover {
-  transform: scale(1.1);
+/* =========================================
+   INTRO
+========================================= */
+
+#introBox{
+
+  display:flex;
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  margin-bottom:20px;
 }
 
-.circle-wrapper {
-  height: 260px; /* enough space for expansion */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.intro-text{
+
+  font-size:34px;
+  font-weight:700;
+
+  color:var(--text);
 }
 
-.grounding-card {
-  width: 320px;
-  padding: 30px;
-  border-radius: 20px;
-  background: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  text-align: center;
+.intro-sub{
+
+  margin-top:10px;
+
+  font-size:16px;
+
+  color:var(--text-light);
 }
 
-#groundingStep {
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 1.6;
+/* =========================================
+   GROUNDING
+========================================= */
+
+.grounding-card{
+
+  width:100%;
+  max-width:460px;
+
+  padding:34px;
+
+  border-radius:28px;
+
+  background:var(--bg);
+
+  border:1px solid var(--border);
+
+  box-shadow:var(--shadow);
 }
 
-.body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+#groundingStep{
+
+  font-size:24px;
+
+  line-height:1.8;
+
+  color:var(--text);
 }
 
-.part {
-  width: 180px;
-  padding: 10px;
-  border-radius: 20px;
-  background: #ecf0f1;
-  text-align: center;
-  transition: 0.4s;
+/* =========================================
+   BODY SCAN
+========================================= */
+
+.body{
+
+  display:flex;
+  flex-direction:column;
+
+  align-items:center;
+
+  gap:14px;
+
+  margin-top:10px;
 }
 
-.part.active {
-  background: #6c5ce7;
-  color: white;
-  transform: scale(1.1);
-  box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+.part{
+
+  width:240px;
+
+  padding:15px;
+
+  border-radius:18px;
+
+  background:var(--bg);
+
+  border:1px solid var(--border);
+
+  color:var(--text);
+
+  transition:0.3s ease;
 }
 
-.pulse {
-  animation: pulseAnim 1.5s infinite;
+.part.active{
+
+  background:#8b5cf6;
+
+  color:white;
+
+  border:none;
+
+  transform:scale(1.06);
+
+  box-shadow:
+    0 12px 30px rgba(139,92,246,0.25);
 }
 
-@keyframes pulseAnim {
-  0% {
-    transform: scale(1);
+/* =========================================
+   AFFIRMATIONS
+========================================= */
+
+.affirm-card{
+
+  width:100%;
+  max-width:460px;
+
+  padding:42px;
+
+  border-radius:30px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #8b5cf6,
+      #6d28d9
+    );
+
+  color:white;
+
+  box-shadow:
+    0 16px 40px rgba(139,92,246,0.3);
+}
+
+#affirmText{
+
+  font-size:26px;
+
+  line-height:1.8;
+}
+
+/* =========================================
+   SLEEP
+========================================= */
+
+.sleep-bg{
+
+  position:relative;
+
+  width:100%;
+  max-width:760px;
+
+  height:360px;
+
+  border-radius:30px;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #0f172a,
+      #1e293b
+    );
+}
+
+#starsCanvas{
+
+  position:absolute;
+  inset:0;
+
+  width:100%;
+  height:100%;
+}
+
+.sleep-center{
+
+  position:relative;
+
+  z-index:2;
+
+  height:100%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#sleepText{
+
+  color:#f8fafc;
+
+  font-size:28px;
+
+  padding:0 20px;
+}
+
+/* =========================================
+   REFRAME
+========================================= */
+
+.reframe-card{
+
+  width:100%;
+  max-width:480px;
+
+  padding:30px;
+
+  border-radius:28px;
+
+  background:var(--bg);
+
+  border:1px solid var(--border);
+
+  box-shadow:var(--shadow);
+}
+
+#reframeInput{
+
+  width:100%;
+
+  height:120px;
+
+  border:none;
+  outline:none;
+
+  resize:none;
+
+  border-radius:18px;
+
+  padding:16px;
+
+  background:var(--card);
+
+  border:1px solid var(--border);
+
+  color:var(--text);
+
+  font-size:14px;
+
+  margin-bottom:18px;
+}
+
+#reframeBtn{
+
+  border:none;
+
+  background:#8b5cf6;
+
+  color:white;
+
+  padding:13px 22px;
+
+  border-radius:16px;
+
+  cursor:pointer;
+
+  font-weight:600;
+
+  transition:0.3s ease;
+}
+
+#reframeBtn:hover{
+
+  transform:
+    translateY(-2px);
+}
+
+#reframeOutput{
+
+  margin-top:18px;
+
+  line-height:1.7;
+
+  color:var(--text-light);
+}
+
+/* =========================================
+   ANIMATION
+========================================= */
+
+.fade{
+
+  animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+
+  from{
+    opacity:0;
+    transform:translateY(10px);
   }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
 
-.affirm-card {
-  width: 320px;
-  padding: 40px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
-  color: white;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
-}
-
-#affirmText {
-  font-size: 26px;
-  font-weight: 600;
-  line-height: 1.4;
-  transition: 0.4s;
-}
-
-/* Fade animation */
-.fade {
-  animation: fadeIn 0.6s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  to{
+    opacity:1;
+    transform:translateY(0);
   }
 }
 
-.sleep-bg {
-  position: relative;
-  width: 90vh;
-  height: 50vh;
-  border-radius: 20px;
-  overflow: hidden;
-  background: linear-gradient(180deg, #0b132b, #1c2541);
+.pulse{
+
+  animation:pulseAnim 1.5s infinite;
 }
 
-#starsCanvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
+@keyframes pulseAnim{
 
-.sleep-center {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  0%{
+    transform:scale(1);
+  }
 
-#sleepText {
-  color: #e0e7ff;
-  font-size: 28px;
-  text-align: center;
-  letter-spacing: 0.5px;
-}
+  50%{
+    transform:scale(1.06);
+  }
 
-.reframe-card {
-  width: 360px;
-  padding: 24px;
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-#reframeInput {
-  width: 100%;
-  height: 80px;
-  margin-bottom: 12px;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  resize: none;
-}
-
-#reframeBtn {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 20px;
-  background: #6c5ce7;
-  color: white;
-  cursor: pointer;
-}
-
-#reframeOutput {
-  margin-top: 15px;
-  font-size: 16px;
-  color: #333;
-}
-
-#introBox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 75vh;
-  text-align: center;
-  z-index: 5;
-}
-
-.intro-text {
-  font-size: 32px;
-  font-weight: 700;
-}
-
-.intro-sub {
-  font-size: 18px;
-  color: #666;
-  margin-top: 10px;
-}
-
-.controls {
-  position: relative;
-  z-index: 10;
+  100%{
+    transform:scale(1);
+  }
 }
 
 
-/* ================= DARK MODE - MEDITATION PAGE ================= */
 
-body.dark-mode {
-background: linear-gradient(135deg, #0f172a, #111827);
-color: #f3f4f6;
+/* =========================================
+   DARK MODE CARD FIX
+========================================= */
+
+body[data-theme="dark"] .relief-card{
+
+  border:1px solid rgba(255,255,255,0.06);
+
+  box-shadow:
+    0 14px 34px rgba(0,0,0,0.35);
+
+  backdrop-filter:blur(12px);
 }
 
-/* Titles */
-body.dark-mode .relief-title,
-body.dark-mode #title,
-body.dark-mode #groundingStep,
-body.dark-mode #affirmText {
-color: #f9fafb;
+/* DARK CARD GRADIENTS */
+
+body[data-theme="dark"] .blue{
+  background:
+    linear-gradient(
+      135deg,
+      #183b56 0%,
+      #22577a 100%
+    );
 }
 
-/* Subtitles */
-body.dark-mode .relief-subtitle,
-body.dark-mode #subtitle,
-body.dark-mode .intro-sub,
-body.dark-mode #reframeOutput {
-color: #d1d5db;
+body[data-theme="dark"] .green{
+  background:
+    linear-gradient(
+      135deg,
+      #18392b 0%,
+      #276749 100%
+    );
 }
 
-/* Relief cards */
-body.dark-mode .relief-card {
-background: #1f2937;
-color: white;
-box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+body[data-theme="dark"] .purple{
+  background:
+    linear-gradient(
+      135deg,
+      #3b2457 0%,
+      #5b3b8a 100%
+    );
 }
 
-/* Card descriptions */
-body.dark-mode .card-description {
-color: #d1d5db;
+body[data-theme="dark"] .yellow{
+  background:
+    linear-gradient(
+      135deg,
+      #4f3d12 0%,
+      #7a5d17 100%
+    );
 }
 
-/* Meditation circle glow */
-body.dark-mode #circle {
-box-shadow: 0 0 50px rgba(34, 211, 238, 0.5);
+body[data-theme="dark"] .indigo{
+  background:
+    linear-gradient(
+      135deg,
+      #232b5c 0%,
+      #3949ab 100%
+    );
 }
 
-/* Grounding card */
-body.dark-mode .grounding-card {
-background: #1e293b;
-color: white;
+body[data-theme="dark"] .pink{
+  background:
+    linear-gradient(
+      135deg,
+      #5b2545 0%,
+      #9d4370 100%
+    );
 }
 
-/* Body scan parts */
-body.dark-mode .part {
-background: #374151;
-color: white;
+/* TOP GLOW CIRCLE */
+
+body[data-theme="dark"] .relief-card::before{
+
+  background:
+    rgba(255,255,255,0.06);
 }
 
-body.dark-mode .part.active {
-background: #8b5cf6;
+/* ICON */
+
+body[data-theme="dark"] .card-icon{
+
+  background:
+    rgba(255,255,255,0.12);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  color:white;
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.08);
 }
 
-/* Reframe card */
-body.dark-mode .reframe-card {
-background: #1f2937;
-color: white;
+/* TITLE */
+
+body[data-theme="dark"] .card-title{
+
+  color:#ffffff;
+
+  text-shadow:
+    0 2px 10px rgba(0,0,0,0.25);
 }
 
-/* Textarea */
-body.dark-mode #reframeInput {
-background: #111827;
-color: white;
-border: 1px solid #4b5563;
+/* DESCRIPTION */
+
+body[data-theme="dark"] .card-description{
+
+  color:
+    rgba(255,255,255,0.78);
 }
 
-/* Buttons */
-body.dark-mode #reframeBtn,
-body.dark-mode #pauseBtn,
-body.dark-mode #resumeBtn,
-body.dark-mode #stopBtn {
-color: white;
+/* HOVER */
+
+body[data-theme="dark"] .relief-card:hover{
+
+  transform:
+    translateY(-8px);
+
+  box-shadow:
+    0 22px 45px rgba(0,0,0,0.45);
 }
 
-/* Intro */
-body.dark-mode .intro-text {
-color: white;
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:768px){
+
+  .meditation-page{
+
+    margin-left:0;
+
+    padding:
+      94px 16px 20px;
+  }
+
+  .relief-container{
+
+    padding:24px;
+  }
+
+  .relief-title{
+
+    font-size:28px;
+  }
+
+  .cards-grid{
+
+    grid-template-columns:1fr;
+  }
+
+  .meditationContainer{
+
+    padding:30px 18px;
+
+    min-height:auto;
+  }
+
+  #circle{
+
+    width:150px;
+    height:150px;
+  }
+
+  .sleep-bg{
+
+    height:260px;
+  }
+
+  #sleepText{
+
+    font-size:22px;
+  }
+
+  .controls{
+
+    width:100%;
+  }
+
+  .controls button{
+
+    width:100%;
+  }
+
+  .part{
+
+    width:100%;
+    max-width:240px;
+  }
 }
 
-/* Sleep text */
-body.dark-mode #sleepText {
-color: #f3f4f6;
+
+/* =========================================
+   DARK MODE FULL PAGE FIX
+========================================= */
+
+body[data-theme="dark"]{
+
+  background:#0b1120;
 }
 
-/* Meditation container */
-body.dark-mode .meditationContainer {
-color: white;
+/* OUTER WRAPPER */
+
+body[data-theme="dark"] .main-content,
+body[data-theme="dark"] .dashboard-content,
+body[data-theme="dark"] .content,
+body[data-theme="dark"] .page-content,
+body[data-theme="dark"] .container{
+
+  background:transparent !important;
+}
+
+/* MAIN PAGE */
+
+body[data-theme="dark"] .meditation-page{
+
+  background:
+    linear-gradient(
+      135deg,
+      #0b1120 0%,
+      #111827 50%,
+      #0f172a 100%
+    ) !important;
+
+  min-height:100vh;
+}
+
+/* MAIN PANEL */
+
+body[data-theme="dark"] .relief-container{
+
+  background:
+    linear-gradient(
+      145deg,
+      #182338,
+      #1e293b
+    ) !important;
+
+  border:1px solid rgba(255,255,255,0.06);
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.45);
+}
+
+/* REMOVE WHITE CARD EFFECT */
+
+body[data-theme="dark"] .relief-card{
+
+  border:1px solid rgba(255,255,255,0.05);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.35);
+}
+
+/* CARD OVERLAY */
+
+body[data-theme="dark"] .relief-card::before{
+
+  background:
+    rgba(255,255,255,0.05);
+}
+
+/* ICON GLASS */
+
+body[data-theme="dark"] .card-icon{
+
+  background:
+    rgba(255,255,255,0.08);
+
+  border:
+    1px solid rgba(255,255,255,0.05);
+}
+
+/* TEXT */
+
+body[data-theme="dark"] .card-title{
+
+  color:#ffffff;
+}
+
+body[data-theme="dark"] .card-description{
+
+  color:#cbd5e1;
+}
+
+/* DARK PREMIUM CARD COLORS */
+
+body[data-theme="dark"] .blue{
+
+  background:
+    linear-gradient(
+      135deg,
+      #17406a,
+      #21557e
+    );
+}
+
+body[data-theme="dark"] .green{
+
+  background:
+    linear-gradient(
+      135deg,
+      #14532d,
+      #1f7a45
+    );
+}
+
+body[data-theme="dark"] .purple{
+
+  background:
+    linear-gradient(
+      135deg,
+      #4c1d95,
+      #6d28d9
+    );
+}
+
+body[data-theme="dark"] .yellow{
+
+  background:
+    linear-gradient(
+      135deg,
+      #6b4f00,
+      #8a6a12
+    );
+}
+
+body[data-theme="dark"] .indigo{
+
+  background:
+    linear-gradient(
+      135deg,
+      #2b348f,
+      #4353c7
+    );
+}
+
+body[data-theme="dark"] .pink{
+
+  background:
+    linear-gradient(
+      135deg,
+      #7a214f,
+      #a63b6e
+    );
 }
