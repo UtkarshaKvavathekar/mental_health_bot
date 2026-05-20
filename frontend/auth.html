@@ -1,78 +1,272 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Serene | Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Serene | Authentication</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="css/auth.css" />
-  </head>
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 
-  <body class="light-bg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Auth Section -->
-    <div class="auth-wrapper">
-      <form id="authForm">
-        <div class="auth-box">
+  <!-- Icons -->
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
-          <h2 id="formTitle">Login</h2>
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
 
-          <!-- Full Name (Sign Up only) -->
-          <div class="input-group" id="nameField" style="display: none">
-            <input type="text" id="name" placeholder="Full Name" minlength="3"/>
+<body>
+
+  <!-- ADVANCED BACKGROUND -->
+
+  <div class="bg-overlay"></div>
+
+  <div class="gradient-orb orb-1"></div>
+  <div class="gradient-orb orb-2"></div>
+  <div class="gradient-orb orb-3"></div>
+
+  <div class="floating-dot dot-1"></div>
+  <div class="floating-dot dot-2"></div>
+  <div class="floating-dot dot-3"></div>
+  <div class="floating-dot dot-4"></div>
+
+  <div class="bg-grid"></div>
+
+  <!-- MAIN CONTAINER -->
+
+  <div class="auth-container">
+
+    <!-- LEFT SIDE -->
+
+    <div class="auth-left">
+
+      <div class="brand-box">
+
+        <div class="logo">S</div>
+
+        <h1>Serene</h1>
+
+        <p>
+          Your personal space for calmness,
+          mindfulness, and emotional wellness.
+        </p>
+
+        <div class="features">
+
+          <div>
+            <i class="fa-solid fa-brain"></i>
+            AI Wellness Support
           </div>
 
-          <!-- Email -->
-          <div class="input-group">
-            <input type="email" id="email" placeholder="Email Address" required/>
+          <div>
+            <i class="fa-solid fa-heart"></i>
+            Mood Tracking
           </div>
 
-          <!-- Phone -->
-          <div class="input-group" id="phoneField" style="display: none">
-            <input type="text" id="phone" placeholder="Phone Number" />
-          </div>
-
-          <!-- Age -->
-          <div class="input-group" id="ageField" style="display: none">
-            <input type="number" id="age" placeholder="Age" min="10" max="100" />
-          </div>
-
-          <!-- Gender -->
-          <div class="input-group" id="genderField" style="display: none">
-            <select id="gender">
-              <option value="" disabled selected>Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          <!-- Password -->
-          <div class="input-group">
-            <input type="password" id="password" placeholder="Password" required minlength="6"/>
-          </div>
-
-          <!-- Confirm Password -->
-          <div class="input-group" id="confirmField" style="display: none">
-            <input type="password" id="confirmPassword" placeholder="Confirm Password"/>
-          </div>
-
-          <!-- FIXED BUTTON -->
-          <button class="auth-btn" id="authBtn" type="submit">
-            Login
-          </button>
-
-          <div class="switch">
-            Don’t have account? <span onclick="switchForm()">Sign Up</span>
+          <div>
+            <i class="fa-solid fa-moon"></i>
+            Better Sleep & Peace
           </div>
 
         </div>
-      </form>
+
+      </div>
+
     </div>
 
-    <!-- SCRIPTS (IMPORTANT ORDER) -->
-    <script src="script/api.js"></script>
-    <script src="script/auth.js"></script>
+    <!-- RIGHT SIDE -->
 
-  </body>
+    <div class="auth-right">
+
+      <form id="authForm">
+
+        <div class="auth-box">
+
+          <div class="top-text">
+
+            <h2 id="formTitle">
+              Welcome Back
+            </h2>
+
+            <p>
+              Login to continue your wellness journey
+            </p>
+
+          </div>
+
+          <!-- Full Name -->
+
+          <div class="input-group"
+            id="nameField"
+            style="display:none">
+
+            <i class="fa-regular fa-user"></i>
+
+            <input
+              type="text"
+              id="name"
+              placeholder="Full Name"
+              minlength="3">
+
+          </div>
+
+          <!-- Email -->
+
+          <div class="input-group">
+
+            <i class="fa-regular fa-envelope"></i>
+
+            <input
+              type="email"
+              id="email"
+              placeholder="Email Address"
+              required>
+
+          </div>
+
+          <!-- Phone -->
+
+          <div class="input-group"
+            id="phoneField"
+            style="display:none">
+
+            <i class="fa-solid fa-phone"></i>
+
+            <input
+              type="text"
+              id="phone"
+              placeholder="Phone Number">
+
+          </div>
+
+          <!-- Age -->
+
+          <div class="input-group"
+            id="ageField"
+            style="display:none">
+
+            <i class="fa-solid fa-cake-candles"></i>
+
+            <input
+              type="number"
+              id="age"
+              placeholder="Age"
+              min="10"
+              max="100">
+
+          </div>
+
+          <!-- Gender -->
+
+          <div class="input-group"
+            id="genderField"
+            style="display:none">
+
+            <i class="fa-solid fa-venus-mars"></i>
+
+            <select id="gender">
+
+              <option value="" disabled selected>
+                Select Gender
+              </option>
+
+              <option value="Male">
+                Male
+              </option>
+
+              <option value="Female">
+                Female
+              </option>
+
+              <option value="Other">
+                Other
+              </option>
+
+            </select>
+
+          </div>
+
+          <!-- Password -->
+
+          <div class="input-group">
+
+            <i class="fa-solid fa-lock"></i>
+
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              required
+              minlength="6">
+
+          </div>
+
+          <!-- Confirm Password -->
+
+          <div class="input-group"
+            id="confirmField"
+            style="display:none">
+
+            <i class="fa-solid fa-lock"></i>
+
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm Password">
+
+          </div>
+
+          <!-- BUTTON -->
+
+          <button
+            class="auth-btn"
+            id="authBtn"
+            type="submit">
+
+            Login
+
+          </button>
+
+          <!-- DIVIDER -->
+
+          <div class="divider">
+            <span>OR</span>
+          </div>
+
+          <!-- GOOGLE BUTTON -->
+
+          <button type="button" class="google-btn">
+
+            <i class="fa-brands fa-google google-icon"></i>
+
+            Continue with Google
+
+          </button>
+
+          <!-- SWITCH -->
+
+          <div class="switch">
+
+            Don’t have an account?
+
+            <span onclick="switchForm()">
+              Sign Up
+            </span>
+
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+  <script src="script/api.js"></script>
+  <script src="script/auth.js"></script>
+
+</body>
 </html>
