@@ -99,16 +99,32 @@ def rag_node(State:ChatState):
 #     print(rag_node(test_state))
 
 #Emergency node:
-def emergency_node(state: dict):
+from langchain_core.messages import AIMessage
+
+def emergency_node(state):
     print("🚨 Emergency triggered")
 
-    result = emergency_call()
+    try:
+        result = emergency_call()
+        print("Twilio call placed:", result)
+
+    except Exception as e:
+        print("Twilio Error:", e)
+        result = {"status": "failed"}
 
     return {
-        **state,
+        "messages": [
+            AIMessage(
+                content=(
+                    "I'm really concerned about what you've shared. "
+                    "Please reach out to a trusted family member, friend, "
+                    "mental health professional, or emergency service right now. "
+                    "You don't have to handle this alone."
+                )
+            )
+        ],
         "emergency": result
     }
-
 
 #Building the agent
 
@@ -244,17 +260,18 @@ def route_decision(state:ChatState):
 
 #Building graph
 #1.Create workflow
-workflow=StateGraph(MessagesState)
+workflow=StateGraph(ChatState)
 
 #2.Add nodes
 workflow.add_node("emotion",emotion_node)
 workflow.add_node("router",router_node)
 workflow.add_node("rag",rag_node)
 workflow.add_node("agent",call_model)
-workflow.add_node("emergency",emergency_node)
+workflow.add_node("emergency", emergency_node)
 
 #3.Define flow
 workflow.add_edge(START,"router")
+workflow.add_edge("emergency", END)
 
 #4.Addind conditional routing
 workflow.add_conditional_edges(
